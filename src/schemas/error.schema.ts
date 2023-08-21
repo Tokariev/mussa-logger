@@ -12,6 +12,8 @@ export class Error {
   @Prop()
   service: string;
   @Prop()
+  error: string;
+  @Prop()
   traceback: string;
   @Prop({ default: Date.now })
   createdAt: Date;

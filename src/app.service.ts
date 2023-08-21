@@ -22,16 +22,19 @@ export class AppService {
   ) {}
 
   logError(error: ErrorDto) {
+    console.log('Log error');
     const createError = new this.errorModel(error);
     createError.save();
   }
 
   logCarDetails(carDetails: CarDetailsDto) {
+    console.log('Log car details');
     const createCarDetails = new this.carDetailsModel(carDetails);
     createCarDetails.save();
   }
 
   logCar(car: CarDto) {
+    console.log('Log car');
     const createCar = new this.carModel(car);
     createCar.save();
   }
@@ -46,7 +49,7 @@ export class AppService {
 
     return this.carModel
       .find({
-        parsedAt: {
+        createdAt: {
           $gte: today,
         },
       })

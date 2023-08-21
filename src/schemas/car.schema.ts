@@ -54,16 +54,16 @@ export class Car {
   @Prop()
   air_conditioning: string;
   @Prop()
-  has_full_service_history: boolean;
+  has_full_service_history: string;
   @Prop()
   has_car_accident: boolean;
   @Prop()
   engine_power: string[];
   @Prop()
   published_at: string;
-  // ------------------------
-  @Prop({ required: true, default: now() })
-  parsedAt: Date;
+
+  @Prop({ default: Date.now })
+  createdAt: Date;
 }
 
 export const CarSchema = SchemaFactory.createForClass(Car);

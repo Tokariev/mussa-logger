@@ -19,6 +19,8 @@ export class CarDetails {
   seatsCount: string;
   @Prop()
   prices: object[];
+  @Prop({ default: Date.now })
+  createdAt: Date;
 }
 
 export const CarDetailsSchema = SchemaFactory.createForClass(CarDetails);
