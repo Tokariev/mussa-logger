@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CarSchema } from './schemas/car.schema';
 import { CarDetailsSchema } from './schemas/car-details.schema';
 import { ErrorSchema } from './schemas/error.schema';
+import { TracebackErrorSchema } from './schemas/traceback-error.schema';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ErrorSchema } from './schemas/error.schema';
       { name: 'Car', schema: CarSchema },
       { name: 'CarDetails', schema: CarDetailsSchema },
       { name: 'Error', schema: ErrorSchema },
+      { name: 'TracebackError', schema: TracebackErrorSchema },
     ]),
   ],
   controllers: [AppController],

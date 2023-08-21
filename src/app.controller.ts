@@ -3,6 +3,7 @@ import { AppService } from './app.service';
 import { CarDto } from './dto/car-dto';
 import { CarDetailsDto } from './dto/car-details-dto';
 import { ErrorDto } from './dto/error-dto';
+import { TracebackErrorDto } from './dto/traceback-error-dto';
 
 @Controller()
 export class AppController {
@@ -26,6 +27,11 @@ export class AppController {
   @Post('/logError')
   async logError(@Body() error: ErrorDto) {
     this.appService.logError(error);
+  }
+
+  @Post('/logTracebackError')
+  async logTracebackError(@Body() tracebackError: TracebackErrorDto) {
+    this.appService.logTracebackError(tracebackError);
   }
 
   // Counters
