@@ -22,7 +22,7 @@ export class CarDto {
   price: number;
   price_rating: string;
   has_value_added_tax: boolean;
-  is_negotiating_basis: boolean;
+  is_negotiation_basis: boolean;
   seller_type: string;
 
   postal_code: string;

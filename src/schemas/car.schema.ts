@@ -42,7 +42,7 @@ export class Car {
   @Prop()
   has_value_added_tax: boolean;
   @Prop()
-  is_negotiating_basis: boolean;
+  is_negotiation_basis: boolean;
   @Prop()
   seller_type: string;
   @Prop()
