@@ -4,6 +4,11 @@ interface TechnicalData {
   value: string;
 }
 
+interface PriceRating {
+  rating: string;
+  rating_reason: string;
+}
+
 export class CarDto {
   id: number;
   url: string;
@@ -20,7 +25,7 @@ export class CarDto {
   seller_phone: Array<string>;
   equipment: Array<string>;
   price: number;
-  price_rating: string;
+  price_rating_object: PriceRating;
   has_value_added_tax: boolean;
   is_negotiation_basis: boolean;
   seller_type: string;
