@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CarDto } from './dto/car-dto';
 import { CarDetailsDto } from './dto/car-details-dto';
@@ -19,6 +19,11 @@ export class AppController {
     this.appService.logCar(car);
   }
 
+  @Post('/car-by-url')
+  async readDataByUrl(@Body()  car: CarDto) {
+    return this.appService.readDataByUrl(car.url);
+  }
+  
   @Post('/logCarDetails')
   async logCarDetails(@Body() carDetails: CarDetailsDto) {
     this.appService.logCarDetails(carDetails);

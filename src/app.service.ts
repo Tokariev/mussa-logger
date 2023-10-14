@@ -14,6 +14,7 @@ import { Model } from 'mongoose';
 
 @Injectable()
 export class AppService {
+
   constructor(
     @InjectModel(Error.name)
     private errorModel: Model<Error>,
@@ -48,6 +49,11 @@ export class AppService {
     const createCar = new this.carModel(car);
     createCar.save();
   }
+
+  readDataByUrl(url: string) {
+    return this.carModel.findOne({ url: url }).sort({ createdAt: -1 }).exec();
+  }
+
 
   readCountOfCars(): Promise<number> {
     return this.carModel.countDocuments().exec();
