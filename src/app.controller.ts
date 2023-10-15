@@ -14,48 +14,48 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Post('/logCar')
+  @Post('/log-car')
   async logCar(@Body() car: CarDto) {
     this.appService.logCar(car);
+  }
+
+  @Post('/log-car-details')
+  async logCarDetails(@Body() carDetails: CarDetailsDto) {
+    this.appService.logCarDetails(carDetails);
   }
 
   @Post('/car-by-url')
   async readDataByUrl(@Body()  car: CarDto) {
     return this.appService.readDataByUrl(car.url);
   }
-  
-  @Post('/logCarDetails')
-  async logCarDetails(@Body() carDetails: CarDetailsDto) {
-    this.appService.logCarDetails(carDetails);
-  }
-
-  @Post('/logError')
+ 
+  @Post('/log-error')
   async logError(@Body() error: ErrorDto) {
     this.appService.logError(error);
   }
 
-  @Post('/logTracebackError')
+  @Post('/log-traceback-error')
   async logTracebackError(@Body() tracebackError: TracebackErrorDto) {
     this.appService.logTracebackError(tracebackError);
   }
 
   // Counters
-  @Get('/countOfCars')
+  @Get('/count-of-cars')
   async readCountOfCars(): Promise<number> {
     return this.appService.readCountOfCars();
   }
 
-  @Get('/countOfCarsToday')
+  @Get('/count-of-cars-today')
   async readCountOfCarsToday(): Promise<number> {
     return this.appService.readCountOfCarsToday();
   }
 
-  @Get('/countOfErrors')
+  @Get('/count-of-errors')
   async readCountOfErrors(): Promise<number> {
     return this.appService.readCountOfErrors();
   }
 
-  @Get('/countOfErrorsToday')
+  @Get('/count-of-errors-today')
   async readCountOfErrorsToday(): Promise<number> {
     return this.appService.readCountOfErrorsToday();
   }

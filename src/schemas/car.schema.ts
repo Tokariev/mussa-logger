@@ -35,10 +35,8 @@ export class Car {
   equipment: string[];
   @Prop()
   price: number;
-  @Prop()
-  price_rating: string;
-  @Prop()
-  price_history: object[];
+  @Prop({ type: Object })
+  price_rating_object: object;
   @Prop()
   has_value_added_tax: boolean;
   @Prop()
