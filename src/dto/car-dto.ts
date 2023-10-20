@@ -33,7 +33,6 @@ export class CarDto {
   postal_code: string;
   city: string;
   photo_urls: string;
-  air_conditioning: string;
   has_full_service_history: boolean;
   has_car_accident: boolean;
   published_at: string;

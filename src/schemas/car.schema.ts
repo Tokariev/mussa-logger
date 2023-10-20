@@ -50,8 +50,6 @@ export class Car {
   @Prop()
   photo_urls: string[];
   @Prop()
-  air_conditioning: string;
-  @Prop()
   has_full_service_history: string;
   @Prop()
   has_car_accident: boolean;
