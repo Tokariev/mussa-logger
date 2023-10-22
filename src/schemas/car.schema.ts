@@ -12,6 +12,8 @@ export class Car {
   @Prop()
   source: string;
   @Prop()
+  ad_status: string;
+  @Prop()
   title: string;
   @Prop()
   brand: string;
@@ -31,6 +33,8 @@ export class Car {
   technical_data: object[];
   @Prop()
   seller_phone: string[];
+  @Prop()
+  contact_name: string;
   @Prop()
   equipment: string[];
   @Prop()
