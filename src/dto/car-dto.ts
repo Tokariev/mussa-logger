@@ -12,6 +12,7 @@ interface PriceRating {
 export class CarDto {
   id: number;
   url: string;
+  ad_status: string;
   source: string;
   brand: string;
   model: string;
@@ -35,5 +36,5 @@ export class CarDto {
   photo_urls: string;
   has_full_service_history: boolean;
   has_car_accident: boolean;
-  published_at: string;
+  // published_at: string;
 }

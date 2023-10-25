@@ -5,12 +5,14 @@ import { ErrorDto } from './dto/error-dto';
 import { TracebackErrorDto } from './dto/traceback-error-dto';
 
 import { Car } from './schemas/car.schema';
+import { CarToJazmakki } from './schemas/car-to-jazmakki.schema';
 import { Error } from './schemas/error.schema';
 import { CarDetails } from './schemas/car-details.schema';
 import { TracebackError } from './schemas/traceback-error.schema';
 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { PriceRating } from './schemas/price-rating.schema';
 
 @Injectable()
 export class AppService {
@@ -24,6 +26,10 @@ export class AppService {
     private carDetailsModel: Model<CarDetails>,
     @InjectModel(Car.name)
     private carModel: Model<Car>,
+    @InjectModel(PriceRating.name)
+    private priceRatingModel: Model<PriceRating>,
+    @InjectModel(CarToJazmakki.name)
+    private carToJazmakkiModel: Model<CarToJazmakki>,
   ) {}
 
   logError(error: ErrorDto) {
@@ -48,6 +54,19 @@ export class AppService {
     console.log('Log car');
     const createCar = new this.carModel(car);
     createCar.save();
+  }
+
+  logPriceRating(priceRating: PriceRating) {
+    console.log('Log price rating');
+    const createPriceRating = new this.priceRatingModel(priceRating);
+    createPriceRating.save();
+  }
+
+  logCarToJazmakki(car: CarDto) {
+    console.log('Log car to jazmakki');
+    const createCarToJazmakki = new this.carToJazmakkiModel(car);
+    createCarToJazmakki.save();
+    
   }
 
   readDataByUrl(url: string) {

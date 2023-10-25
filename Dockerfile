@@ -19,4 +19,6 @@ COPY --from=development /usr/src/app/dist ./dist
 COPY package*.json ./
 RUN npm install --only=production
 
+ENV TZ="Europe/Berlin"
+
 CMD ["node", "dist/main"]

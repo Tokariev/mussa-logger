@@ -6,6 +6,8 @@ import { CarSchema } from './schemas/car.schema';
 import { CarDetailsSchema } from './schemas/car-details.schema';
 import { ErrorSchema } from './schemas/error.schema';
 import { TracebackErrorSchema } from './schemas/traceback-error.schema';
+import { PriceRatingSchema } from './schemas/price-rating.schema';
+import { CarToJazmakkiSchema } from './schemas/car-to-jazmakki.schema';
 
 @Module({
   imports: [
@@ -19,8 +21,11 @@ import { TracebackErrorSchema } from './schemas/traceback-error.schema';
     MongooseModule.forFeature([
       { name: 'Car', schema: CarSchema },
       { name: 'CarDetails', schema: CarDetailsSchema },
+      { name: 'PriceRating', schema: PriceRatingSchema },
+      {name : 'CarToJazmakki', schema: CarToJazmakkiSchema },
       { name: 'Error', schema: ErrorSchema },
       { name: 'TracebackError', schema: TracebackErrorSchema },
+
     ]),
   ],
   controllers: [AppController],

@@ -1,20 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, now } from 'mongoose';
 
-export type CarDocument = HydratedDocument<Car>;
+export type CarToJazmakkiDocument = HydratedDocument<CarToJazmakki>;
 
 @Schema()
-export class Car {
+export class CarToJazmakki {
   @Prop()
   id: number;
   @Prop()
   url: string;
   @Prop()
-  source: string;
+  title: string;
   @Prop()
   ad_status: string;
   @Prop()
-  title: string;
+  source: string;
   @Prop()
   brand: string;
   @Prop()
@@ -27,6 +27,7 @@ export class Car {
   fuel_type: string;
   @Prop()
   model_variant: string;
+
   @Prop()
   description: string;
   @Prop()
@@ -34,9 +35,10 @@ export class Car {
   @Prop()
   seller_phone: string[];
   @Prop()
-  contact_name: string;
-  @Prop()
   equipment: string[];
+  @Prop()
+  contact_name: string;
+  
   @Prop()
   price: number;
   @Prop({ type: Object })
@@ -66,4 +68,4 @@ export class Car {
   createdAt: Date;
 }
 
-export const CarSchema = SchemaFactory.createForClass(Car);
+export const CarToJazmakkiSchema = SchemaFactory.createForClass(CarToJazmakki);

@@ -4,6 +4,7 @@ import { CarDto } from './dto/car-dto';
 import { CarDetailsDto } from './dto/car-details-dto';
 import { ErrorDto } from './dto/error-dto';
 import { TracebackErrorDto } from './dto/traceback-error-dto';
+import { PriceRating } from './schemas/price-rating.schema';
 
 @Controller()
 export class AppController {
@@ -22,6 +23,16 @@ export class AppController {
   @Post('/log-car-details')
   async logCarDetails(@Body() carDetails: CarDetailsDto) {
     this.appService.logCarDetails(carDetails);
+  }
+
+  @Post('/log-price-rating')
+  async logPriceRating(@Body() priceRating: PriceRating) {
+    this.appService.logPriceRating(priceRating);
+  }
+
+  @Post('/log-car-to-jazmakki')
+  async logCarToJazmakki(@Body() car: CarDto) {
+    this.appService.logCarToJazmakki(car);
   }
 
   @Post('/car-by-url')
