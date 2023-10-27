@@ -5,7 +5,6 @@ import { ErrorDto } from './dto/error-dto';
 import { TracebackErrorDto } from './dto/traceback-error-dto';
 
 import { Car } from './schemas/car.schema';
-import { CarToJazmakki } from './schemas/car-to-jazmakki.schema';
 import { Error } from './schemas/error.schema';
 import { CarDetails } from './schemas/car-details.schema';
 import { TracebackError } from './schemas/traceback-error.schema';
@@ -26,10 +25,10 @@ export class AppService {
     private carDetailsModel: Model<CarDetails>,
     @InjectModel(Car.name)
     private carModel: Model<Car>,
+    @InjectModel(Car.name)
+    private carToJazmakkiModel: Model<Car>,
     @InjectModel(PriceRating.name)
     private priceRatingModel: Model<PriceRating>,
-    @InjectModel(CarToJazmakki.name)
-    private carToJazmakkiModel: Model<CarToJazmakki>,
   ) {}
 
   logError(error: ErrorDto) {

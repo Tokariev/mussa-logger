@@ -42,6 +42,8 @@ export class Car {
   @Prop({ type: Object })
   price_rating_object: object;
   @Prop()
+  price_history: object[];
+  @Prop()
   has_value_added_tax: boolean;
   @Prop()
   is_negotiation_basis: boolean;
@@ -59,9 +61,6 @@ export class Car {
   has_car_accident: boolean;
   @Prop()
   engine_power: string[];
-  // @Prop()
-  // published_at: string;
-
   @Prop({ default: Date.now })
   createdAt: Date;
 }
