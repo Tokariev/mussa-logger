@@ -16,6 +16,7 @@ import { PriceRating } from './schemas/price-rating.schema';
 @Injectable()
 export class AppService {
 
+
   constructor(
     @InjectModel(Error.name)
     private errorModel: Model<Error>,
@@ -31,40 +32,37 @@ export class AppService {
     private priceRatingModel: Model<PriceRating>,
   ) {}
 
-  logError(error: ErrorDto) {
+  async logError(error: ErrorDto) {
     console.log('Log error');
     const createError = new this.errorModel(error);
     createError.save();
   }
 
-  logTracebackError(tracebackError: TracebackErrorDto) {
+  async logTracebackError(tracebackError: TracebackErrorDto) {
     console.log('Log traceback error');
     const createTracebackError = new this.tracebackErrorModel(tracebackError);
     createTracebackError.save();
   }
 
-  logCarDetails(carDetails: CarDetailsDto) {
+  async logCarDetails(carDetails: CarDetailsDto) : Promise<CarDetails> {
     console.log('Log car details');
     const createCarDetails = new this.carDetailsModel(carDetails);
-    createCarDetails.save();
+    return createCarDetails.save();
   }
 
-  logCar(car: CarDto) {
-    console.log('Log car');
+  async logCar(car: CarDto) : Promise<Car> {
     const createCar = new this.carModel(car);
-    createCar.save();
+    return createCar.save();
   }
 
-  logPriceRating(priceRating: PriceRating) {
-    console.log('Log price rating');
+  async logPriceRating(priceRating: PriceRating) : Promise<PriceRating> {
     const createPriceRating = new this.priceRatingModel(priceRating);
-    createPriceRating.save();
+    return createPriceRating.save();
   }
 
-  logCarToJazmakki(car: CarDto) {
-    console.log('Log car to jazmakki');
+  async logCarToJazmakki(car: CarDto) : Promise<Car> {
     const createCarToJazmakki = new this.carToJazmakkiModel(car);
-    createCarToJazmakki.save();
+    return createCarToJazmakki.save();
     
   }
 
@@ -72,6 +70,9 @@ export class AppService {
     return this.carModel.findOne({ url: url }).sort({ createdAt: -1 }).exec();
   }
 
+  findAllCarsBySourceUrl(sourceUrl: string) {
+    return this.carModel.find({ sourceUrl: sourceUrl }).sort({ createdAt: -1 }).exec();
+  }
 
   readCountOfCars(): Promise<number> {
     return this.carModel.countDocuments().exec();

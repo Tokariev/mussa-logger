@@ -39,6 +39,11 @@ export class AppController {
   async readDataByUrl(@Body()  car: CarDto) {
     return this.appService.readDataByUrl(car.url);
   }
+
+  @Post('/cars-by-source-url')
+  async findAllCarsBySourceUrl(@Body()  sourceUrl: string) {
+    return this.appService.findAllCarsBySourceUrl(sourceUrl);
+  }
  
   @Post('/log-error')
   async logError(@Body() error: ErrorDto) {
