@@ -3,10 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { CarDto } from '../dto/car-dto';
 import { Car } from '../schemas/car.schema';
 import { UpdatePriceType } from './types/update-price.type';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class CarService {
-  constructor(private readonly carModel: Model<Car>) {}
+  constructor(
+    @InjectModel(Car.name)
+    private readonly carModel: Model<Car>,
+  ) {}
 
   async create(car: CarDto) {
     const createdCar = new this.carModel(car);
@@ -18,9 +22,8 @@ export class CarService {
 
   async findLastByUrl(car: CarDto) {
     return this.carModel
-      .find({ source: car.source })
-      .sort({ createdAt: -1 })
-      .limit(1);
+      .findOne({ source: car.source })
+      .sort({ createdAt: -1 });
   }
 
   async findOne(documentId: string) {
