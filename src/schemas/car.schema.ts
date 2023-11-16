@@ -40,7 +40,7 @@ export class Car {
   @Prop()
   price: number;
   @Prop({ type: Object })
-  price_rating_object: object;
+  price_rating: object;
   @Prop()
   price_history: object[];
   @Prop()

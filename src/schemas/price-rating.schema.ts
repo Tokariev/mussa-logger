@@ -8,7 +8,7 @@ export class PriceRating {
   @Prop()
   id: number;
   @Prop({ type: Object })
-  price_rating_object: object;
+  price_rating: object;
   @Prop({ default: Date.now })
   createdAt: Date;
 }

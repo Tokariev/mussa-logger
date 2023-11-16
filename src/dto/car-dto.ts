@@ -26,7 +26,7 @@ export class CarDto {
   seller_phone: Array<string>;
   equipment: Array<string>;
   price: number;
-  price_rating_object: PriceRating;
+  price_rating: PriceRating;
   has_value_added_tax: boolean;
   is_negotiation_basis: boolean;
   seller_type: string;
