@@ -12,7 +12,7 @@ export class CarController {
     return this.carService.create(car);
   }
 
-  @Post('/find-by-url')
+  @Post('/find-all-by-url')
   async findAllByUrl(@Body() car: CarDto) {
     return this.carService.findAllByUrl(car);
   }

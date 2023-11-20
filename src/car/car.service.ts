@@ -45,4 +45,10 @@ export class CarService {
 
     return car.save();
   }
+
+  async removeOldCars() {
+    const today = new Date();
+    const sixtyDaysAgo = new Date(today.setDate(today.getDate() - 60));
+    return this.carModel.deleteMany({ createdAt: { $lte: sixtyDaysAgo } });
+  }
 }

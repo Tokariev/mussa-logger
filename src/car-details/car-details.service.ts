@@ -16,4 +16,12 @@ export class CarDetailsService {
     const createCarDetails = new this.carDetailsModel(carDetails);
     return createCarDetails.save();
   }
+
+  removeOldCarDetails() {
+    const today = new Date();
+    const sixtyDaysAgo = new Date(today.setDate(today.getDate() - 60));
+    return this.carDetailsModel.deleteMany({
+      createdAt: { $lte: sixtyDaysAgo },
+    });
+  }
 }

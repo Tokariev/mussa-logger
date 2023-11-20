@@ -18,5 +18,6 @@ import { CarDetailsSchema } from '../schemas/car-details.schema';
   ],
   controllers: [CarDetailsController],
   providers: [CarDetailsService],
+  exports: [CarDetailsService],
 })
 export class CarDetailsModule {}

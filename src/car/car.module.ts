@@ -17,5 +17,6 @@ import { CarSchema } from '../schemas/car.schema';
   ],
   controllers: [CarController],
   providers: [CarService],
+  exports: [CarService],
 })
 export class CarModule {}
