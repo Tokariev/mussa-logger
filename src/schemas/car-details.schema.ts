@@ -14,11 +14,17 @@ export class CarDetails {
   @Prop()
   model: string;
   @Prop()
+  brand: string;
+  @Prop()
   package: string;
+  @Prop()
+  bodyType: string;
   @Prop()
   seatsCount: string;
   @Prop()
   prices: object[];
+  @Prop()
+  numResultsTotal: number;
   @Prop({ default: Date.now })
   createdAt: Date;
 }

@@ -7,6 +7,19 @@ import { UpdatePriceType } from './types/update-price.type';
 export class CarController {
   constructor(private readonly carService: CarService) {}
 
+  @Get('count')
+  async count() {
+    return this.carService.count();
+  }
+
+  @Get('/data-in-batches/:skip/:limit')
+  async findAllInBatches(
+    @Param('skip') skip: number,
+    @Param('limit') limit: number,
+  ) {
+    return this.carService.findAllInBatches(skip, limit);
+  }
+
   @Post('/create')
   async create(@Body() car: CarDto) {
     return this.carService.create(car);
@@ -20,11 +33,6 @@ export class CarController {
   @Post('/find-last-by-url')
   async findLastByUrl(@Body() car: CarDto) {
     return this.carService.findLastByUrl(car);
-  }
-
-  @Get(':documentId')
-  async findOne(@Param('documentId') documentId: string) {
-    return this.carService.findOne(documentId);
   }
 
   // Update price

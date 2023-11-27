@@ -36,6 +36,8 @@ export class Car {
   @Prop()
   contact_name: string;
   @Prop()
+  contact_active_since: string;
+  @Prop()
   equipment: string[];
   @Prop()
   price: number;

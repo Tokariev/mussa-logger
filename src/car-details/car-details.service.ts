@@ -12,7 +12,6 @@ export class CarDetailsService {
   ) {}
 
   create(carDetails: CarDetailsDto) {
-    console.log('Log car details');
     const createCarDetails = new this.carDetailsModel(carDetails);
     return createCarDetails.save();
   }

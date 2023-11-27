@@ -10,7 +10,6 @@ import { TracebackModule } from './traceback/traceback.module';
 import { CountModule } from './count/count.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronJobsModule } from './cron-jobs/cron-jobs.module';
-
 @Module({
   imports: [
     CarModule,

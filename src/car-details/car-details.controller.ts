@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { CarDetailsService } from './car-details.service';
 import { CarDetailsDto } from '../dto/car-details-dto';
 
@@ -7,7 +7,7 @@ export class CarDetailsController {
   constructor(private readonly carDetailsService: CarDetailsService) {}
 
   @Post('/create')
-  async create(carDetails: CarDetailsDto) {
+  async create(@Body() carDetails: CarDetailsDto) {
     return this.carDetailsService.create(carDetails);
   }
 }

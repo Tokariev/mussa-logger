@@ -7,6 +7,7 @@ interface TechnicalData {
 interface PriceRating {
   rating: string;
   rating_reason: string;
+  threshold: string[];
 }
 
 export class CarDto {

@@ -12,10 +12,19 @@ export class CarService {
     private readonly carModel: Model<Car>,
   ) {}
 
+  count() {
+    return this.carModel.countDocuments();
+  }
+
+  findAllInBatches(skip: number, limit: number) {
+    return this.carModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+  }
+
   async create(car: CarDto) {
     const createdCar = new this.carModel(car);
     return createdCar.save();
   }
+
   async findAllByUrl(car: CarDto) {
     return this.carModel.find({ source: car.source }).sort({ createdAt: -1 });
   }
