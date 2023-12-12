@@ -3,6 +3,10 @@ import { HydratedDocument, now } from 'mongoose';
 
 export type CarDocument = HydratedDocument<Car>;
 
+type PriceHistory = {
+  price: number;
+  timestamp: Date;
+};
 @Schema()
 export class Car {
   @Prop()
@@ -44,7 +48,7 @@ export class Car {
   @Prop({ type: Object })
   price_rating: object;
   @Prop()
-  price_history: object[];
+  price_history: PriceHistory[];
   @Prop()
   has_value_added_tax: boolean;
   @Prop()

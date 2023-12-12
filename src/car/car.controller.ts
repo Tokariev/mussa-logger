@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CarDto } from '../dto/car-dto';
 import { UpdatePriceType } from './types/update-price.type';
@@ -10,14 +10,6 @@ export class CarController {
   @Get('count')
   async count() {
     return this.carService.count();
-  }
-
-  @Get('/data-in-batches/:skip/:limit')
-  async findAllInBatches(
-    @Param('skip') skip: number,
-    @Param('limit') limit: number,
-  ) {
-    return this.carService.findAllInBatches(skip, limit);
   }
 
   @Post('/create')

@@ -6,13 +6,6 @@ import { PriceRatingSchema } from '../schemas/price-rating.schema';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://mongo:27017', {
-      dbName: 'logs',
-      auth: {
-        username: 'root',
-        password: 'example',
-      },
-    }),
     MongooseModule.forFeature([
       { name: 'PriceRating', schema: PriceRatingSchema },
     ]),

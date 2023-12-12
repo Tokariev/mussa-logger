@@ -12,7 +12,6 @@ export class ErrorService {
   ) {}
 
   createError(error: ErrorDto) {
-    const createError = new this.errorModel(error);
-    return createError.save();
+    this.errorModel.create(error);
   }
 }

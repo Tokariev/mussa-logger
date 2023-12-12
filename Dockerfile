@@ -21,4 +21,5 @@ RUN npm install --only=production
 
 ENV TZ="Europe/Berlin"
 
-CMD ["node", "dist/main"]
+# set to 12 GB JavaScript Heap memory
+CMD ["node", "--max-old-space-size=12225", "dist/main"]

@@ -6,8 +6,6 @@ export type ErrorDocument = HydratedDocument<Error>;
 @Schema()
 export class Error {
   @Prop()
-  id: number;
-  @Prop()
   url: string;
   @Prop({ default: Date.now })
   createdAt: Date;

@@ -6,13 +6,6 @@ import { TracebackErrorSchema } from '../schemas/traceback-error.schema';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://mongo:27017', {
-      dbName: 'logs',
-      auth: {
-        username: 'root',
-        password: 'example',
-      },
-    }),
     MongooseModule.forFeature([
       { name: 'TracebackError', schema: TracebackErrorSchema },
     ]),

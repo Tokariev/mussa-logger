@@ -5,13 +5,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CarDetailsSchema } from '../schemas/car-details.schema';
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://mongo:27017', {
-      dbName: 'logs',
-      auth: {
-        username: 'root',
-        password: 'example',
-      },
-    }),
     MongooseModule.forFeature([
       { name: 'CarDetails', schema: CarDetailsSchema },
     ]),

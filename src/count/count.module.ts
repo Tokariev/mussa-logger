@@ -6,13 +6,6 @@ import { CarSchema } from '../schemas/car.schema';
 import { ErrorSchema } from 'src/schemas/error.schema';
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://mongo:27017', {
-      dbName: 'logs',
-      auth: {
-        username: 'root',
-        password: 'example',
-      },
-    }),
     MongooseModule.forFeature([
       { name: 'Car', schema: CarSchema },
       { name: 'Error', schema: ErrorSchema },

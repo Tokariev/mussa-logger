@@ -16,10 +16,6 @@ export class CarService {
     return this.carModel.countDocuments();
   }
 
-  findAllInBatches(skip: number, limit: number) {
-    return this.carModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
-  }
-
   async create(car: CarDto) {
     const createdCar = new this.carModel(car);
     return createdCar.save();
@@ -46,7 +42,7 @@ export class CarService {
 
     const currentPrice = {
       price: newPrice,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(),
     };
 
     car.price = newPrice;
@@ -59,5 +55,50 @@ export class CarService {
     const today = new Date();
     const sixtyDaysAgo = new Date(today.setDate(today.getDate() - 60));
     return this.carModel.deleteMany({ createdAt: { $lte: sixtyDaysAgo } });
+  }
+
+  deleteCar(id: number) {
+    console.log('LOGGER: Deleting car with id: ', id);
+    this.carModel.deleteMany({ id: id });
+  }
+
+  async updatePriceById(id: number, newPrice: number) {
+    const filter = { id: id };
+
+    const carToUpdate = await this.carModel.findOne(filter);
+
+    if (!carToUpdate) {
+      return;
+    }
+
+    console.log(`Updating car with id: ${id} to ${newPrice}`);
+
+    if (carToUpdate.price_history.length === 0) {
+      const prevPrice = {
+        price: carToUpdate.price,
+        timestamp: carToUpdate.createdAt,
+      };
+      carToUpdate.price_history.push(prevPrice);
+
+      const currentPrice = {
+        price: newPrice,
+        timestamp: new Date(),
+      };
+      carToUpdate.price_history.unshift(currentPrice);
+    }
+
+    const currentPrice = {
+      price: newPrice,
+      timestamp: new Date(),
+    };
+    carToUpdate.price_history.unshift(currentPrice);
+    carToUpdate.price = newPrice;
+
+    await carToUpdate.save();
+  }
+
+  async updateCarStatus(id: number, status: string) {
+    console.log(`Updating car status with id: ${id} to ${status}`);
+    await this.carModel.updateMany({ id: id }, { ad_status: status });
   }
 }

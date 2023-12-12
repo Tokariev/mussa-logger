@@ -10,8 +10,17 @@ import { TracebackModule } from './traceback/traceback.module';
 import { CountModule } from './count/count.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronJobsModule } from './cron-jobs/cron-jobs.module';
+import { SocketModule } from './socket/socket.module';
+import { MongooseModule } from '@nestjs/mongoose';
 @Module({
   imports: [
+    MongooseModule.forRoot('mongodb://mongo:27017', {
+      dbName: 'logs',
+      auth: {
+        username: 'root',
+        password: 'example',
+      },
+    }),
     CarModule,
     CarDetailsModule,
     PriceRatingModule,
@@ -21,6 +30,7 @@ import { CronJobsModule } from './cron-jobs/cron-jobs.module';
     CountModule,
     CronJobsModule,
     ScheduleModule.forRoot(),
+    SocketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
