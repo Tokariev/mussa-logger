@@ -7,6 +7,7 @@ import { CarDetailsSchema } from '../schemas/car-details.schema';
   imports: [
     MongooseModule.forFeature([
       { name: 'CarDetails', schema: CarDetailsSchema },
+      { name: 'EmitedCarDetails', schema: CarDetailsSchema },
     ]),
   ],
   controllers: [CarDetailsController],

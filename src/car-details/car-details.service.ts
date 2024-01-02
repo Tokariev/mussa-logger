@@ -3,17 +3,33 @@ import { CarDetails } from '../schemas/car-details.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { EmitedCarDetails } from 'src/schemas/emited-car-details.schema';
 
 @Injectable()
 export class CarDetailsService {
   constructor(
     @InjectModel(CarDetails.name)
     private carDetailsModel: Model<CarDetails>,
+    @InjectModel(EmitedCarDetails.name)
+    private emitedCarDetailsModel: Model<EmitedCarDetails>,
   ) {}
 
-  create(carDetails: CarDetailsDto) {
+  async create(carDetails: CarDetailsDto) {
     const createCarDetails = new this.carDetailsModel(carDetails);
     return createCarDetails.save();
+  }
+
+  async createEmitedCarDetails(carDetails: CarDetailsDto) {
+    const emitedCarDetails = new this.emitedCarDetailsModel(carDetails);
+    return emitedCarDetails.save();
+  }
+
+  async findById(id: string) {
+    return this.carDetailsModel.find({ id: id });
+  }
+
+  async findEmitedById(id: string) {
+    return this.emitedCarDetailsModel.find({ id: id });
   }
 
   removeOldCarDetails() {

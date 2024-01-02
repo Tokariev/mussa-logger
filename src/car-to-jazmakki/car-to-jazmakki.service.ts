@@ -15,4 +15,8 @@ export class CarToJazmakkiService {
     const createCarToJazmakki = new this.carToJazmakkiModel(carToJazmakki);
     return createCarToJazmakki.save();
   }
+
+  findById(id: string) {
+    return this.carToJazmakkiModel.find({ id: id });
+  }
 }

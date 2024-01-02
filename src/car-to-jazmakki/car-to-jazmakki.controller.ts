@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CarToJazmakkiService } from './car-to-jazmakki.service';
 import { CarDto } from '../dto/car-dto';
 
@@ -9,5 +9,10 @@ export class CarToJazmakkiController {
   @Post('/create')
   async createCarToJazmakki(@Body() carToJazmakki: CarDto) {
     return this.carToJazmakkiService.createCarToJazmakki(carToJazmakki);
+  }
+
+  @Get('/:id')
+  async findById(@Param('id') id: string) {
+    return this.carToJazmakkiService.findById(id);
   }
 }

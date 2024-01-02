@@ -1,15 +1,18 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { CarDto } from '../dto/car-dto';
-import { Car } from '../schemas/car.schema';
 import { UpdatePriceType } from './types/update-price.type';
 import { InjectModel } from '@nestjs/mongoose';
+import { Car } from '../schemas/car.schema';
+import { CarDetailsRequest } from 'src/schemas/car-details-request.schema';
 
 @Injectable()
 export class CarService {
   constructor(
     @InjectModel(Car.name)
     private readonly carModel: Model<Car>,
+    @InjectModel(CarDetailsRequest.name)
+    private readonly carDetailsRequestModel: Model<CarDetailsRequest>,
   ) {}
 
   count() {
@@ -19,6 +22,15 @@ export class CarService {
   async create(car: CarDto) {
     const createdCar = new this.carModel(car);
     return createdCar.save();
+  }
+
+  async createCarDetailsRequest(car: CarDto) {
+    const createdCarDetailsRequest = new this.carDetailsRequestModel(car);
+    return createdCarDetailsRequest.save();
+  }
+
+  async findCarDetailsRequests(id: string): Promise<CarDetailsRequest[]> {
+    return this.carDetailsRequestModel.find({ id: id });
   }
 
   async findAllByUrl(car: CarDto) {

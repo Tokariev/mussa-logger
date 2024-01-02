@@ -17,6 +17,16 @@ export class CarController {
     return this.carService.create(car);
   }
 
+  @Post('/create-car-details-request')
+  async createCarDetailsRequest(@Body() car: CarDto) {
+    return this.carService.createCarDetailsRequest(car);
+  }
+
+  @Get('car-details-request/:id')
+  async findCarDetailsRequests(@Param('id') id: string) {
+    return this.carService.findCarDetailsRequests(id);
+  }
+
   @Post('/find-all-by-url')
   async findAllByUrl(@Body() car: CarDto) {
     return this.carService.findAllByUrl(car);
