@@ -7,9 +7,14 @@ import { UpdatePriceType } from './types/update-price.type';
 export class CarController {
   constructor(private readonly carService: CarService) {}
 
-  @Get('count')
+  @Get('/count')
   async count() {
     return this.carService.count();
+  }
+
+  @Get('/last')
+  async findAll() {
+    return this.carService.findLast();
   }
 
   @Post('/create')

@@ -19,6 +19,10 @@ export class CarService {
     return this.carModel.countDocuments();
   }
 
+  findLast() {
+    return this.carModel.findOne().sort({ createdAt: -1 });
+  }
+
   async create(car: CarDto) {
     const createdCar = new this.carModel(car);
     return createdCar.save();
