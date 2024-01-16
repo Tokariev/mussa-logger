@@ -41,6 +41,18 @@ export class CarService {
     return this.carModel.find({ source: car.source }).sort({ createdAt: -1 });
   }
 
+  findAllByMobileDeId(mobileDeId: string) {
+    // Find all cars that contains mobile.de in the source url and contains the mobile.de id in the source url
+    return this.carModel
+      .find({
+        $and: [
+          { source: { $regex: 'mobile.de' } },
+          { source: { $regex: mobileDeId } },
+        ],
+      })
+      .sort({ createdAt: -1 });
+  }
+
   async findLastByUrl(car: CarDto) {
     return this.carModel
       .findOne({ source: car.source })
