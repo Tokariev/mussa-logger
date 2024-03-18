@@ -37,12 +37,12 @@ export class CarController {
     return this.carService.findAllByUrl(car);
   }
 
-  @Post('/find-all-by-mobile-de-id')
-  // { mobileDeId: '123456789' }
-  async findAllByMobileDeId(@Body() { mobileDeId }: { mobileDeId: string }) {
-    console.log('Mobile-ID:', mobileDeId);
-    return this.carService.findAllByMobileDeId(mobileDeId);
-  }
+  // @Post('/find-all-by-mobile-de-id')
+  // // { mobileDeId: '123456789' }
+  // async findAllByMobileDeId(@Body() { mobileDeId }: { mobileDeId: string }) {
+  //   console.log('Mobile-ID:', mobileDeId);
+  //   return this.carService.findAllByMobileDeId(mobileDeId);
+  // }
 
   @Post('/find-last-by-url')
   async findLastByUrl(@Body() car: CarDto) {
