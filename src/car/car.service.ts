@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Car } from '../schemas/car.schema';
 import { CarDetailsRequest } from 'src/schemas/car-details-request.schema';
 
+// The exec method executes the query asynchronously and returns a promise.
 @Injectable()
 export class CarService {
   constructor(
@@ -15,12 +16,12 @@ export class CarService {
     private readonly carDetailsRequestModel: Model<CarDetailsRequest>,
   ) {}
 
-  count() {
-    return this.carModel.countDocuments();
+  async count() {
+    return this.carModel.countDocuments().exec();
   }
 
-  findLast() {
-    return this.carModel.findOne().sort({ createdAt: -1 });
+  async findLast() {
+    return this.carModel.findOne().sort({ createdAt: -1 }).lean().exec();
   }
 
   async create(car: CarDto) {
@@ -34,33 +35,23 @@ export class CarService {
   }
 
   async findCarDetailsRequests(id: string): Promise<CarDetailsRequest[]> {
-    return this.carDetailsRequestModel.find({ id: id });
+    return this.carDetailsRequestModel.find({ id: id }).lean().exec();
   }
 
   async findAllByUrl(car: CarDto) {
     return this.carModel.find({ source: car.source }).sort({ createdAt: -1 });
   }
 
-  // findAllByMobileDeId(mobileDeId: string) {
-  //   // Find all cars that contains mobile.de in the source url and contains the mobile.de id in the source url
-  //   return this.carModel
-  //     .find({
-  //       $and: [
-  //         { source: { $regex: 'mobile.de' } },
-  //         { source: { $regex: mobileDeId } },
-  //       ],
-  //     })
-  //     .sort({ createdAt: -1 });
-  // }
-
   async findLastByUrl(car: CarDto) {
     return this.carModel
       .findOne({ source: car.source })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
   }
 
   async findOne(documentId: string) {
-    return this.carModel.findById(documentId);
+    return this.carModel.findById(documentId).lean().exec();
   }
 
   async updatePrice(price: UpdatePriceType) {
@@ -82,12 +73,14 @@ export class CarService {
   async removeOldCars() {
     const today = new Date();
     const sixtyDaysAgo = new Date(today.setDate(today.getDate() - 60));
-    return this.carModel.deleteMany({ createdAt: { $lte: sixtyDaysAgo } });
+    return this.carModel
+      .deleteMany({ createdAt: { $lte: sixtyDaysAgo } })
+      .exec();
   }
 
   deleteCar(id: number) {
     console.log('LOGGER: Deleting car with id: ', id);
-    this.carModel.deleteMany({ id: id });
+    this.carModel.deleteMany({ id: id }).exec();
   }
 
   async updatePriceById(id: number, newPrice: number) {
@@ -127,6 +120,6 @@ export class CarService {
 
   async updateCarStatus(id: number, status: string) {
     console.log(`Updating car status with id: ${id} to ${status}`);
-    await this.carModel.updateMany({ id: id }, { ad_status: status });
+    this.carModel.updateMany({ id: id }, { ad_status: status }).exec();
   }
 }

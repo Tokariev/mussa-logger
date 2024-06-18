@@ -13,7 +13,7 @@ export class Car {
   id: number;
   @Prop()
   url: string;
-  @Prop()
+  @Prop({ index: true })
   source: string;
   @Prop()
   ad_status: string;
