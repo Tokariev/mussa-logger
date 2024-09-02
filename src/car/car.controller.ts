@@ -46,4 +46,9 @@ export class CarController {
   async updatePrice(@Body() newPrice: UpdatePriceType) {
     return this.carService.updatePrice(newPrice);
   }
+
+  @Get('/cars-without-car-details')
+  async findAllCarsWithoutCarDetails() {
+    return this.carService.findAllCarsWithoutCarDetails();
+  }
 }

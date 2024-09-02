@@ -5,6 +5,7 @@ import { UpdatePriceType } from './types/update-price.type';
 import { InjectModel } from '@nestjs/mongoose';
 import { Car } from '../schemas/car.schema';
 import { CarDetailsRequest } from 'src/schemas/car-details-request.schema';
+import { CarDetails } from 'src/schemas/car-details.schema';
 
 // The exec method executes the query asynchronously and returns a promise.
 @Injectable()
@@ -12,6 +13,8 @@ export class CarService {
   constructor(
     @InjectModel(Car.name)
     private readonly carModel: Model<Car>,
+    @InjectModel(CarDetails.name)
+    private readonly carDetailsModel: Model<CarDetails>,
     @InjectModel(CarDetailsRequest.name)
     private readonly carDetailsRequestModel: Model<CarDetailsRequest>,
   ) {}
@@ -121,5 +124,38 @@ export class CarService {
   async updateCarStatus(id: number, status: string) {
     console.log(`Updating car status with id: ${id} to ${status}`);
     this.carModel.updateMany({ id: id }, { ad_status: status }).exec();
+  }
+
+  async findAllCarsWithoutCarDetails() {
+    // Selecr all cars from yesterday that doesn't have entry in car details collection with the same id
+    const today = new Date();
+    const yesterdayStart = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() - 1,
+    );
+    const yesterdayEnd = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+    );
+
+    // Find all car IDs created yesterday
+    const carsFromYesterday = await this.carModel
+      .find({ createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd } })
+      .select('id') // Only select the id field to minimize data transfer
+      .lean()
+      .exec();
+
+    const carIdsFromYesterday = carsFromYesterday.map((car) => car.id);
+
+    // Find cars from yesterday that do not have corresponding entries in the CarDetails collection
+    const carsWithoutDetails = await this.carDetailsModel
+      .find({ id: { $nin: carIdsFromYesterday } })
+      .select('id')
+      .lean()
+      .exec();
+
+    return carsWithoutDetails;
   }
 }

@@ -16,4 +16,10 @@ export class CronJobsService {
     this.carService.removeOldCars();
     this.carDetailsService.removeOldCarDetails();
   }
+
+  // One per day at 10:00 get all cars from yestarday that doesnt have car details
+  @Cron('0 0 10 * * *')
+  getNewCars(): void {
+    this.carService.findAllCarsWithoutCarDetails();
+  }
 }
