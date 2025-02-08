@@ -1,5 +1,5 @@
 export class TracebackErrorDto {
-  id: number;
+  externalCarId: number;
   url: string;
   service: string;
   error: string;

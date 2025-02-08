@@ -16,7 +16,14 @@ export class CarToJazmakkiService {
     return createCarToJazmakki.save();
   }
 
-  findById(id: string) {
-    return this.carToJazmakkiModel.find({ id: id });
+  findByExternalCarId(externalCarId: string) {
+    return this.carToJazmakkiModel.find({ externalCarId });
+  }
+
+  async removeOldCarToJazmakki() {
+    // Find all cars older then 60 days and remove them
+    const date = new Date();
+    date.setDate(date.getDate() - 60);
+    return this.carToJazmakkiModel.deleteMany({ createdAt: { $lt: date } });
   }
 }

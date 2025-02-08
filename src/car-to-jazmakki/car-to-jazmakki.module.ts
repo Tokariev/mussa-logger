@@ -10,5 +10,6 @@ import { CarSchema } from '../schemas/car.schema';
 
   controllers: [CarToJazmakkiController],
   providers: [CarToJazmakkiService],
+  exports: [CarToJazmakkiService],
 })
 export class CarToJazmakkiModule {}

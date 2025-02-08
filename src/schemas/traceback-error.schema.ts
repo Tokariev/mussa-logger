@@ -5,8 +5,8 @@ export type TracebackErrorDocument = HydratedDocument<TracebackError>;
 
 @Schema()
 export class TracebackError {
-  @Prop()
-  id: number;
+  @Prop({ index: true })
+  externalCarId: string;
   @Prop()
   url: string;
   @Prop()

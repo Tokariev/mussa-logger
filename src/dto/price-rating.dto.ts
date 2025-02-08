@@ -1,5 +1,5 @@
 export class PriceRatingDto {
-  id: number;
+  externalCarId: string;
   price_rating: object;
   threshold: string[];
 }

@@ -8,6 +8,7 @@ export class TracebackController {
 
   @Post('/create')
   async createTraceback(traceback: TracebackErrorDto) {
+    console.log('TracebackController.createTraceback ~ ~~ ~ ~', traceback);
     return this.tracebackService.createTraceback(traceback);
   }
 }

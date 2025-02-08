@@ -11,8 +11,8 @@ export class CarToJazmakkiController {
     return this.carToJazmakkiService.createCarToJazmakki(carToJazmakki);
   }
 
-  @Get('/:id')
-  async findById(@Param('id') id: string) {
-    return this.carToJazmakkiService.findById(id);
+  @Get('/:externalCarId')
+  async findById(@Param('externalCarId') externalCarId: string) {
+    return this.carToJazmakkiService.findByExternalCarId(externalCarId);
   }
 }

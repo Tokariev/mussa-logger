@@ -5,8 +5,8 @@ export type PriceRatingDocument = HydratedDocument<PriceRating>;
 
 @Schema()
 export class PriceRating {
-  @Prop()
-  id: number;
+  @Prop({ index: true })
+  externalCarId: string;
   @Prop({ type: Object })
   price_rating: object;
   @Prop({ default: Date.now })

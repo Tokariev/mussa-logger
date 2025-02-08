@@ -17,14 +17,14 @@ export class CarDetailsController {
   }
 
   // Get car details by id
-  @Get('/:id')
-  async findById(@Param('id') id: string) {
-    return this.carDetailsService.findById(id);
+  @Get('/:externalCarId')
+  async findById(@Param('externalCarId') externalCarId: string) {
+    return this.carDetailsService.findByExternalCarId(externalCarId);
   }
 
   // Get emited car details by id
-  @Get('/emited/:id')
-  async findEmitedById(@Param('id') id: string) {
-    return this.carDetailsService.findEmitedById(id);
+  @Get('/emited/:externalCarId')
+  async findEmitedById(@Param('externalCarId') externalCarId: string) {
+    return this.carDetailsService.findEmitedByExternalCarId(externalCarId);
   }
 }

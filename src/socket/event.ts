@@ -1,5 +1,5 @@
 type Data = {
-  id: number;
+  externalCarId: string;
 } & {
   [key: string]: any; // Any other fields with string keys and any values
 };

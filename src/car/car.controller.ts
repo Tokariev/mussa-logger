@@ -27,9 +27,9 @@ export class CarController {
     return this.carService.createCarDetailsRequest(car);
   }
 
-  @Get('car-details-request/:id')
-  async findCarDetailsRequests(@Param('id') id: string) {
-    return this.carService.findCarDetailsRequests(id);
+  @Get('car-details-request/:externalCarId')
+  async findCarDetailsRequests(@Param('externalCarId') externalCarId: string) {
+    return this.carService.findCarDetailsRequests(externalCarId);
   }
 
   @Post('/find-all-by-url')
@@ -50,5 +50,10 @@ export class CarController {
   @Get('/cars-without-car-details')
   async findAllCarsWithoutCarDetails() {
     return this.carService.findAllCarsWithoutCarDetails();
+  }
+
+  @Get('/count-cars-without-car-details')
+  async countCarsWithoutCarDetails() {
+    return this.carService.countCarsWithoutCarDetails();
   }
 }

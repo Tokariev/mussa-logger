@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Car } from '../schemas/car.schema';
 import { CarDetailsRequest } from 'src/schemas/car-details-request.schema';
 import { CarDetails } from 'src/schemas/car-details.schema';
+import { CarToJazmakki } from 'src/schemas/car-to-jazmakki.schema';
 
 // The exec method executes the query asynchronously and returns a promise.
 @Injectable()
@@ -17,6 +18,8 @@ export class CarService {
     private readonly carDetailsModel: Model<CarDetails>,
     @InjectModel(CarDetailsRequest.name)
     private readonly carDetailsRequestModel: Model<CarDetailsRequest>,
+    @InjectModel(CarToJazmakki.name)
+    private readonly carToJazmakkiModel: Model<CarToJazmakki>,
   ) {}
 
   async count() {
@@ -37,8 +40,10 @@ export class CarService {
     return createdCarDetailsRequest.save();
   }
 
-  async findCarDetailsRequests(id: string): Promise<CarDetailsRequest[]> {
-    return this.carDetailsRequestModel.find({ id: id }).lean().exec();
+  async findCarDetailsRequests(
+    externalCarId: string,
+  ): Promise<CarDetailsRequest[]> {
+    return this.carDetailsRequestModel.find({ externalCarId }).lean().exec();
   }
 
   async findAllByUrl(car: CarDto) {
@@ -81,53 +86,22 @@ export class CarService {
       .exec();
   }
 
-  deleteCar(id: number) {
-    console.log('LOGGER: Deleting car with id: ', id);
-    this.carModel.deleteMany({ id: id }).exec();
+  deleteCar(externalCarId: string) {
+    console.log('LOGGER: Deleting car with external car id: ', externalCarId);
+    this.carModel.deleteMany({ externalCarId }).exec();
   }
 
-  async updatePriceById(id: number, newPrice: number) {
-    const filter = { id: id };
-
-    const carToUpdate = await this.carModel.findOne(filter);
-
-    if (!carToUpdate) {
-      return;
-    }
-
-    console.log(`Updating car with id: ${id} to ${newPrice}`);
-
-    if (carToUpdate.price_history.length === 0) {
-      const prevPrice = {
-        price: carToUpdate.price,
-        timestamp: carToUpdate.createdAt,
-      };
-      carToUpdate.price_history.push(prevPrice);
-
-      const currentPrice = {
-        price: newPrice,
-        timestamp: new Date(),
-      };
-      carToUpdate.price_history.unshift(currentPrice);
-    }
-
-    const currentPrice = {
-      price: newPrice,
-      timestamp: new Date(),
-    };
-    carToUpdate.price_history.unshift(currentPrice);
-    carToUpdate.price = newPrice;
-
-    await carToUpdate.save();
+  async updatePriceById(data: CarDto) {
+    const carWithUpdatedPrice = await this.carModel.create(data);
+    await carWithUpdatedPrice.save();
   }
 
-  async updateCarStatus(id: number, status: string) {
-    console.log(`Updating car status with id: ${id} to ${status}`);
-    this.carModel.updateMany({ id: id }, { ad_status: status }).exec();
+  async updateCarStatus(externalCarId: string, status: string) {
+    console.log(`Updating car status with id: ${externalCarId} to ${status}`);
+    this.carModel.updateMany({ externalCarId }, { ad_status: status }).exec();
   }
 
   async findAllCarsWithoutCarDetails() {
-    // Selecr all cars from yesterday that doesn't have entry in car details collection with the same id
     const today = new Date();
     const yesterdayStart = new Date(
       today.getFullYear(),
@@ -140,22 +114,82 @@ export class CarService {
       today.getDate(),
     );
 
-    // Find all car IDs created yesterday
-    const carsFromYesterday = await this.carModel
-      .find({ createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd } })
-      .select('id') // Only select the id field to minimize data transfer
-      .lean()
-      .exec();
-
-    const carIdsFromYesterday = carsFromYesterday.map((car) => car.id);
-
-    // Find cars from yesterday that do not have corresponding entries in the CarDetails collection
-    const carsWithoutDetails = await this.carDetailsModel
-      .find({ id: { $nin: carIdsFromYesterday } })
-      .select('id')
-      .lean()
+    // Aggregate in carToJazmakkiModel to find all car IDs created yesterday that do not have corresponding entries in the CarDetails collection
+    const carsWithoutDetails = await this.carToJazmakkiModel
+      .aggregate([
+        {
+          $match: {
+            createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd },
+          },
+        },
+        {
+          $lookup: {
+            from: 'cardetails', // The name of the CarDetails collection
+            localField: 'externalCarId',
+            foreignField: 'externalCarId',
+            as: 'carDetail',
+          },
+        },
+        {
+          $match: {
+            carDetail: { $size: 0 }, // Filter out cars that have no matching carDetail
+          },
+        },
+        {
+          $project: {
+            externalCarId: 1, // Only select the id field to minimize data transfer
+          },
+        },
+        {
+          $limit: 20, // Limit the result to 20 records
+        },
+      ])
       .exec();
 
     return carsWithoutDetails;
+  }
+
+  async countCarsWithoutCarDetails(): Promise<number> {
+    const today = new Date();
+    const yesterdayStart = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() - 1,
+    );
+    const yesterdayEnd = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+    );
+
+    // Aggregate in carToJazmakkiModel to count all car IDs created yesterday that do not have corresponding entries in the CarDetails collection
+    const result = await this.carToJazmakkiModel
+      .aggregate([
+        {
+          $match: {
+            createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd },
+          },
+        },
+        {
+          $lookup: {
+            from: 'cardetails', // The name of the CarDetails collection
+            localField: 'externalCarId',
+            foreignField: 'externalCarId',
+            as: 'carDetail',
+          },
+        },
+        {
+          $match: {
+            carDetail: { $size: 0 }, // Filter out cars that have no matching carDetail
+          },
+        },
+        {
+          $count: 'count', // Count the number of documents that match the criteria
+        },
+      ])
+      .exec();
+
+    // Return the count or 0 if no results were found
+    return result.length > 0 ? result[0].count : 0;
   }
 }

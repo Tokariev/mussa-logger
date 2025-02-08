@@ -9,12 +9,12 @@ type PriceHistory = {
 };
 @Schema()
 export class Car {
-  @Prop({ index: true })
-  id: number;
   @Prop()
   url: string;
   @Prop({ index: true })
   source: string;
+  @Prop({ index: true })
+  externalCarId: string;
   @Prop()
   ad_status: string;
   @Prop()

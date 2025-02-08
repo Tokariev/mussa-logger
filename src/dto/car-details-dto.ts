@@ -1,7 +1,7 @@
 export class CarDetailsDto {
-  id: number;
   searchUrl: string;
   sourceUrl: string;
+  externalCarId: string;
   brand: string;
   model: string;
   package: string;

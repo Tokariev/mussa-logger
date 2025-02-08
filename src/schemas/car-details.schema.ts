@@ -5,8 +5,8 @@ export type CarDetailsDocument = HydratedDocument<CarDetails>;
 
 @Schema()
 export class CarDetails {
-  @Prop()
-  id: number;
+  @Prop({ index: true })
+  externalCarId: string;
   @Prop()
   searchUrl: string;
   @Prop()

@@ -11,10 +11,10 @@ interface PriceRating {
 }
 
 export class CarDto {
-  id: number;
   url: string;
   ad_status: string;
   source: string;
+  externalCarId: string;
   brand: string;
   model: string;
   year: string;

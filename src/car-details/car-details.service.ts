@@ -24,12 +24,12 @@ export class CarDetailsService {
     return emitedCarDetails.save();
   }
 
-  async findById(id: string) {
-    return this.carDetailsModel.find({ id: id });
+  async findByExternalCarId(externalCarId: string) {
+    return this.carDetailsModel.find({ externalCarId });
   }
 
-  async findEmitedById(id: string) {
-    return this.emitedCarDetailsModel.find({ id: id });
+  async findEmitedByExternalCarId(externalCarId: string) {
+    return this.emitedCarDetailsModel.find({ externalCarId });
   }
 
   removeOldCarDetails() {
