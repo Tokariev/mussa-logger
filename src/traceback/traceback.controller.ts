@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { TracebackService } from './traceback.service';
 import { TracebackErrorDto } from '../dto/traceback-error-dto';
 
@@ -7,8 +7,12 @@ export class TracebackController {
   constructor(private readonly tracebackService: TracebackService) {}
 
   @Post('/create')
-  async createTraceback(traceback: TracebackErrorDto) {
-    console.log('TracebackController.createTraceback ~ ~~ ~ ~', traceback);
+  async createTraceback(@Body() traceback: TracebackErrorDto) {
     return this.tracebackService.createTraceback(traceback);
+  }
+
+  @Get('/failed-parse-requests')
+  async failedParseRequests() {
+    return await this.tracebackService.getCountOfFailedParseRequests();
   }
 }

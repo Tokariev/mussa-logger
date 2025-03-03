@@ -14,4 +14,21 @@ export class TracebackService {
     const createTraceback = new this.tracebackErrorModel(traceback);
     return createTraceback.save();
   }
+
+  getCountOfFailedParseRequests(): Promise<number> {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
+    const filter = {
+      service: 'mobile_svc_parser',
+      createdAt: {
+        $gte: todayStart,
+        $lt: todayEnd,
+      },
+    };
+
+    return this.tracebackErrorModel.countDocuments(filter).exec();
+  }
 }

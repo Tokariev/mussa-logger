@@ -12,6 +12,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { CronJobsModule } from './cron-jobs/cron-jobs.module';
 import { SocketModule } from './socket/socket.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { RequestLoggerModule } from './request-logger/request-logger.module';
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://mongo:27017', {
@@ -31,6 +32,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     CronJobsModule,
     ScheduleModule.forRoot(),
     SocketModule,
+    RequestLoggerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
