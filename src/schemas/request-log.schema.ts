@@ -3,22 +3,16 @@ import { Document } from 'mongoose';
 
 export type RequestLogDocument = RequestLog & Document;
 
-@Schema({ timestamps: true })
+@Schema()
 export class RequestLog {
-  @Prop({ required: true })
-  method: string;
-
-  @Prop({ required: true })
+  @Prop({ index: true })
   url: string;
 
   @Prop()
-  requestBody?: any;
+  route: string;
 
-  @Prop()
-  responseStatus?: number;
-
-  @Prop()
-  responseBody?: any;
+  @Prop({ type: Object })
+  requestBody: object;
 
   @Prop({ default: Date.now })
   createdAt: Date;
