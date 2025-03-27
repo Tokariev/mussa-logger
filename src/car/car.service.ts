@@ -163,7 +163,7 @@ export class CarService {
     );
 
     // Step 1: Get all cars created yesterday (limited to a reasonable number to process)
-    const cars = await this.carToJazmakkiModel
+    const carToJazmakkiYesterday = await this.carToJazmakkiModel
       .find({
         createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd },
       })
@@ -171,16 +171,19 @@ export class CarService {
       .lean()
       .exec();
 
-    if (cars.length === 0) {
+    if (carToJazmakkiYesterday.length === 0) {
       return [];
     }
 
     // Step 2: Extract the external car IDs
-    const externalCarIds = cars.map((car) => car.externalCarId);
+    const externalCarIds = carToJazmakkiYesterday.map(
+      (car) => car.externalCarId,
+    );
 
     // Step 3: Find all car details that exist for these IDs
-    const carDetails = await this.carDetailsModel
+    const carDetailsYesterday = await this.carDetailsModel
       .find({
+        createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd },
         externalCarId: { $in: externalCarIds },
       })
       .select('externalCarId')
@@ -189,11 +192,11 @@ export class CarService {
 
     // Step 4: Create a set of externalCarIds that have details for faster lookup
     const carIdsWithDetails = new Set(
-      carDetails.map((detail) => detail.externalCarId),
+      carDetailsYesterday.map((detail) => detail.externalCarId),
     );
 
     // Step 5: Filter the original cars to find those without details
-    const carsWithoutDetails = cars
+    const carsWithoutDetails = carToJazmakkiYesterday
       .filter((car) => !carIdsWithDetails.has(car.externalCarId))
       .slice(0, 20); // Apply the limit of 20
 
@@ -259,7 +262,7 @@ export class CarService {
 
     // Instead of loading all the data with lookup, we'll use a more efficient approach
     // First, get all car IDs created yesterday
-    const cars = await this.carToJazmakkiModel
+    const carToJazmakkiYesterday = await this.carToJazmakkiModel
       .find({
         createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd },
       })
@@ -267,21 +270,24 @@ export class CarService {
       .lean()
       .exec();
 
-    if (cars.length === 0) {
+    if (carToJazmakkiYesterday.length === 0) {
       return 0;
     }
 
     // Extract the external car IDs
-    const externalCarIds = cars.map((car) => car.externalCarId);
+    const externalCarIds = carToJazmakkiYesterday.map(
+      (car) => car.externalCarId,
+    );
 
     // Now count the car details that exist for these IDs
-    const carDetailsCount = await this.carDetailsModel
+    const carDetailsYesterdayCount = await this.carDetailsModel
       .countDocuments({
+        createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd },
         externalCarId: { $in: externalCarIds },
       })
       .exec();
 
     // The number of cars without details is the total minus those with details
-    return cars.length - carDetailsCount;
+    return carToJazmakkiYesterday.length - carDetailsYesterdayCount;
   }
 }
