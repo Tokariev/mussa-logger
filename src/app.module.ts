@@ -13,6 +13,7 @@ import { CronJobsModule } from './cron-jobs/cron-jobs.module';
 import { SocketModule } from './socket/socket.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RequestLoggerModule } from './request-logger/request-logger.module';
+import { DataflowModule } from './dataflow/dataflow.module';
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://mongo:27017', {
@@ -33,6 +34,7 @@ import { RequestLoggerModule } from './request-logger/request-logger.module';
     ScheduleModule.forRoot(),
     SocketModule,
     RequestLoggerModule,
+    DataflowModule,
   ],
   controllers: [AppController],
   providers: [AppService],

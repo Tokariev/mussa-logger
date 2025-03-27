@@ -22,7 +22,7 @@ export class TracebackService {
     todayEnd.setHours(23, 59, 59, 999);
 
     const filter = {
-      service: 'mobile_svc_parser',
+      service: 'mobile',
       createdAt: {
         $gte: todayStart,
         $lt: todayEnd,
