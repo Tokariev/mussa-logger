@@ -9,4 +9,5 @@ export class CarDetailsDto {
   seatsCount: string;
   prices: object[];
   numResultsTotal: number;
+  observableDataHash: string;
 }

@@ -6,6 +6,7 @@ import { CarSchema } from '../schemas/car.schema';
 import { CarDetailsRequestSchema } from 'src/schemas/car-details-request.schema';
 import { CarDetailsSchema } from 'src/schemas/car-details.schema';
 import { CarToJazmakkiSchema } from 'src/schemas/car-to-jazmakki.schema';
+import { RequestLogSchema } from 'src/schemas/request-log.schema';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CarToJazmakkiSchema } from 'src/schemas/car-to-jazmakki.schema';
       { name: 'CarDetails', schema: CarDetailsSchema },
       { name: 'CarDetailsRequest', schema: CarDetailsRequestSchema },
       { name: 'CarToJazmakki', schema: CarToJazmakkiSchema },
+      { name: 'RequestLog', schema: RequestLogSchema },
     ]),
   ],
   controllers: [CarController],

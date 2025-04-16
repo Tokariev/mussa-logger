@@ -11,7 +11,7 @@ export class CarToJazmakkiService {
     private carToJazmakkiModel: Model<CarToJazmakki>,
   ) {}
 
-  createCarToJazmakki(carToJazmakki: CarDto) {
+  createCarToJazmakki(carToJazmakki: any) {
     const createCarToJazmakki = new this.carToJazmakkiModel(carToJazmakki);
     return createCarToJazmakki.save();
   }

@@ -12,9 +12,9 @@ export class CarController {
     return this.carService.count();
   }
 
-  @Get('/last')
-  async findAll() {
-    return this.carService.findLast();
+  @Get('/last-request-from-parser')
+  async findLastRequestFromParser() {
+    return this.carService.findLastRequestFromParser();
   }
 
   @Post('/create')

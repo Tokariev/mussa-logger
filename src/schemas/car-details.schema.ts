@@ -25,6 +25,8 @@ export class CarDetails {
   prices: object[];
   @Prop()
   numResultsTotal: number;
+  @Prop({ index: true, type: String })
+  observableDataHash: string;
   @Prop({ default: Date.now })
   createdAt: Date;
 }

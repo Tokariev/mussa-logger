@@ -14,6 +14,10 @@ export class CarDetailsService {
     private emitedCarDetailsModel: Model<EmitedCarDetails>,
   ) {}
 
+  async findByObservableDataHash(hash: string) {
+    return this.emitedCarDetailsModel.findOne({ observableDataHash: hash });
+  }
+
   async create(carDetails: CarDetailsDto) {
     const createCarDetails = new this.carDetailsModel(carDetails);
     return createCarDetails.save();

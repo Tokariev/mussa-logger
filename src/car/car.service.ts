@@ -7,6 +7,7 @@ import { Car } from '../schemas/car.schema';
 import { CarDetailsRequest } from 'src/schemas/car-details-request.schema';
 import { CarDetails } from 'src/schemas/car-details.schema';
 import { CarToJazmakki } from 'src/schemas/car-to-jazmakki.schema';
+import { RequestLog } from 'src/schemas/request-log.schema';
 
 // The exec method executes the query asynchronously and returns a promise.
 @Injectable()
@@ -20,14 +21,23 @@ export class CarService {
     private readonly carDetailsRequestModel: Model<CarDetailsRequest>,
     @InjectModel(CarToJazmakki.name)
     private readonly carToJazmakkiModel: Model<CarToJazmakki>,
+    @InjectModel(RequestLog.name)
+    private readonly requestLogModel: Model<RequestLog>,
   ) {}
 
   async count() {
     return this.carModel.countDocuments().exec();
   }
 
-  async findLast() {
-    return this.carModel.findOne().sort({ createdAt: -1 }).lean().exec();
+  async findLastRequestFromParser() {
+    const filter = {
+      route: '/parser',
+    };
+    return this.requestLogModel
+      .findOne(filter)
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
   }
 
   async create(car: CarDto) {
@@ -101,55 +111,21 @@ export class CarService {
     this.carModel.updateMany({ externalCarId }, { ad_status: status }).exec();
   }
 
-  // async findAllCarsWithoutCarDetails() {
-  //   const today = new Date();
-  //   const yesterdayStart = new Date(
-  //     today.getFullYear(),
-  //     today.getMonth(),
-  //     today.getDate() - 1,
-  //   );
-  //   const yesterdayEnd = new Date(
-  //     today.getFullYear(),
-  //     today.getMonth(),
-  //     today.getDate(),
-  //   );
-
-  //   // Aggregate in carToJazmakkiModel to find all car IDs created yesterday that do not have corresponding entries in the CarDetails collection
-  //   const carsWithoutDetails = await this.carToJazmakkiModel
-  //     .aggregate([
-  //       {
-  //         $match: {
-  //           createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd },
-  //         },
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: 'cardetails', // The name of the CarDetails collection
-  //           localField: 'externalCarId',
-  //           foreignField: 'externalCarId',
-  //           as: 'carDetail',
-  //         },
-  //       },
-  //       {
-  //         $match: {
-  //           carDetail: { $size: 0 }, // Filter out cars that have no matching carDetail
-  //         },
-  //       },
-  //       {
-  //         $project: {
-  //           externalCarId: 1, // Only select the id field to minimize data transfer
-  //         },
-  //       },
-  //       {
-  //         $limit: 20, // Limit the result to 20 records
-  //       },
-  //     ])
-  //     .exec();
-
-  //   return carsWithoutDetails;
-  // }
-
-  async findAllCarsWithoutCarDetails() {
+  /**
+   * Retrieves up to 20 cars created yesterday that do not have associated car details.
+   *
+   * This method performs the following steps:
+   * 1. Calculates the start of yesterday and the start of today based on the current date.
+   * 2. Queries the car collection for cars created within the defined period,
+   *    selecting only the `externalCarId` and `createdAt` fields.
+   * 3. For each retrieved car, checks if there's a corresponding car detail entry
+   *    in the car details collection whose `createdAt` timestamp is within one minute
+   *    (i.e., from the car's creation time to one minute after).
+   * 4. Collects cars for which no matching car detail entry exists, stopping after 20 results.
+   *
+   * @returns {Promise<any[]>} A promise that resolves to an array of car objects lacking associated car details.
+   */
+  async findAllCarsWithoutCarDetails(): Promise<any[]> {
     const today = new Date();
     const yesterdayStart = new Date(
       today.getFullYear(),
@@ -162,132 +138,50 @@ export class CarService {
       today.getDate(),
     );
 
-    // Step 1: Get all cars created yesterday (limited to a reasonable number to process)
-    const carToJazmakkiYesterday = await this.carToJazmakkiModel
+    // Schritt 1: Hole alle relevanten Autos
+    const cars = await this.carToJazmakkiModel
       .find({
         createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd },
       })
-      .select('externalCarId')
+      .select('externalCarId createdAt')
       .lean()
       .exec();
 
-    if (carToJazmakkiYesterday.length === 0) {
+    if (cars.length === 0) {
       return [];
     }
 
-    // Step 2: Extract the external car IDs
-    const externalCarIds = carToJazmakkiYesterday.map(
-      (car) => car.externalCarId,
-    );
+    const results: any[] = [];
 
-    // Step 3: Find all car details that exist for these IDs
-    const carDetailsYesterday = await this.carDetailsModel
-      .find({
-        createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd },
-        externalCarId: { $in: externalCarIds },
-      })
-      .select('externalCarId')
-      .lean()
-      .exec();
+    for (const car of cars) {
+      // const startTime = new Date(car.createdAt);
+      // Start time is the createdAt of the car minus 10 seconds
+      const startTime = new Date(car.createdAt);
+      startTime.setSeconds(startTime.getSeconds() - 10);
+      const endTime = new Date(startTime.getTime() + 60 * 1000); // +1 Minute
 
-    // Step 4: Create a set of externalCarIds that have details for faster lookup
-    const carIdsWithDetails = new Set(
-      carDetailsYesterday.map((detail) => detail.externalCarId),
-    );
+      const detailExists = await this.carDetailsModel.exists({
+        externalCarId: car.externalCarId,
+        createdAt: {
+          $gte: startTime,
+          $lte: endTime,
+        },
+      });
 
-    // Step 5: Filter the original cars to find those without details
-    const carsWithoutDetails = carToJazmakkiYesterday
-      .filter((car) => !carIdsWithDetails.has(car.externalCarId))
-      .slice(0, 20); // Apply the limit of 20
+      if (!detailExists) {
+        results.push(car);
+      }
 
-    return carsWithoutDetails;
-  }
-
-  // async countCarsWithoutCarDetails(): Promise<number> {
-  //   const today = new Date();
-  //   const yesterdayStart = new Date(
-  //     today.getFullYear(),
-  //     today.getMonth(),
-  //     today.getDate() - 1,
-  //   );
-  //   const yesterdayEnd = new Date(
-  //     today.getFullYear(),
-  //     today.getMonth(),
-  //     today.getDate(),
-  //   );
-
-  //   // Aggregate in carToJazmakkiModel to count all car IDs created yesterday that do not have corresponding entries in the CarDetails collection
-  //   const result = await this.carToJazmakkiModel
-  //     .aggregate([
-  //       {
-  //         $match: {
-  //           createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd },
-  //         },
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: 'cardetails', // The name of the CarDetails collection
-  //           localField: 'externalCarId',
-  //           foreignField: 'externalCarId',
-  //           as: 'carDetail',
-  //         },
-  //       },
-  //       {
-  //         $match: {
-  //           carDetail: { $size: 0 }, // Filter out cars that have no matching carDetail
-  //         },
-  //       },
-  //       {
-  //         $count: 'count', // Count the number of documents that match the criteria
-  //       },
-  //     ])
-  //     .exec();
-
-  //   // Return the count or 0 if no results were found
-  //   return result.length > 0 ? result[0].count : 0;
-  // }
-
-  async countCarsWithoutCarDetails(): Promise<number> {
-    const today = new Date();
-    const yesterdayStart = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() - 1,
-    );
-    const yesterdayEnd = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-    );
-
-    // Instead of loading all the data with lookup, we'll use a more efficient approach
-    // First, get all car IDs created yesterday
-    const carToJazmakkiYesterday = await this.carToJazmakkiModel
-      .find({
-        createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd },
-      })
-      .select('externalCarId')
-      .lean()
-      .exec();
-
-    if (carToJazmakkiYesterday.length === 0) {
-      return 0;
+      if (results.length >= 20) {
+        break;
+      }
     }
 
-    // Extract the external car IDs
-    const externalCarIds = carToJazmakkiYesterday.map(
-      (car) => car.externalCarId,
-    );
+    return results;
+  }
 
-    // Now count the car details that exist for these IDs
-    const carDetailsYesterdayCount = await this.carDetailsModel
-      .countDocuments({
-        createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd },
-        externalCarId: { $in: externalCarIds },
-      })
-      .exec();
-
-    // The number of cars without details is the total minus those with details
-    return carToJazmakkiYesterday.length - carDetailsYesterdayCount;
+  async countCarsWithoutCarDetails(): Promise<number> {
+    const carsWithoutCarDetails = await this.findAllCarsWithoutCarDetails();
+    return carsWithoutCarDetails.length;
   }
 }

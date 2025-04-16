@@ -27,4 +27,10 @@ export class CarDetailsController {
   async findEmitedById(@Param('externalCarId') externalCarId: string) {
     return this.carDetailsService.findEmitedByExternalCarId(externalCarId);
   }
+
+  // Find car by observable data hash
+  @Get('/observable-data-hash/:hash')
+  async findByObservableDataHash(@Param('hash') hash: string) {
+    return this.carDetailsService.findByObservableDataHash(hash);
+  }
 }
