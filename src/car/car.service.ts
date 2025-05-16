@@ -111,21 +111,7 @@ export class CarService {
     this.carModel.updateMany({ externalCarId }, { ad_status: status }).exec();
   }
 
-  /**
-   * Retrieves up to 20 cars created yesterday that do not have associated car details.
-   *
-   * This method performs the following steps:
-   * 1. Calculates the start of yesterday and the start of today based on the current date.
-   * 2. Queries the car collection for cars created within the defined period,
-   *    selecting only the `externalCarId` and `createdAt` fields.
-   * 3. For each retrieved car, checks if there's a corresponding car detail entry
-   *    in the car details collection whose `createdAt` timestamp is within one minute
-   *    (i.e., from the car's creation time to one minute after).
-   * 4. Collects cars for which no matching car detail entry exists, stopping after 20 results.
-   *
-   * @returns {Promise<any[]>} A promise that resolves to an array of car objects lacking associated car details.
-   */
-  async findAllCarsWithoutCarDetails(): Promise<any[]> {
+  async findAllCarsWithoutCarDetails() {
     const today = new Date();
     const yesterdayStart = new Date(
       today.getFullYear(),
@@ -138,12 +124,12 @@ export class CarService {
       today.getDate(),
     );
 
-    // Schritt 1: Hole alle relevanten Autos
+    // Step 1: Get all cars created yesterday (limited to a reasonable number to process)
     const cars = await this.carToJazmakkiModel
       .find({
         createdAt: { $gte: yesterdayStart, $lt: yesterdayEnd },
       })
-      .select('externalCarId createdAt')
+      .select('externalCarId')
       .lean()
       .exec();
 
@@ -151,37 +137,42 @@ export class CarService {
       return [];
     }
 
-    const results: any[] = [];
+    // Step 2: Extract the external car IDs
+    const externalCarIds = cars.map((car) => car.externalCarId);
 
-    for (const car of cars) {
-      // const startTime = new Date(car.createdAt);
-      // Start time is the createdAt of the car minus 10 seconds
-      const startTime = new Date(car.createdAt);
-      startTime.setSeconds(startTime.getSeconds() - 10);
-      const endTime = new Date(startTime.getTime() + 60 * 1000); // +1 Minute
+    // Step 3: Find all car details that exist for these IDs
+    const carDetails = await this.carDetailsModel
+      .find({
+        externalCarId: { $in: externalCarIds },
+      })
+      .select('externalCarId')
+      .lean()
+      .exec();
 
-      const detailExists = await this.carDetailsModel.exists({
-        externalCarId: car.externalCarId,
-        createdAt: {
-          $gte: startTime,
-          $lte: endTime,
-        },
-      });
+    // Step 4: Create a set of externalCarIds that have details for faster lookup
+    const carIdsWithDetails = new Set(
+      carDetails.map((detail) => detail.externalCarId),
+    );
 
-      if (!detailExists) {
-        results.push(car);
-      }
+    // Step 5: Filter the original cars to find those without details
+    const carsWithoutDetails = cars
+      .filter((car) => !carIdsWithDetails.has(car.externalCarId))
+      .slice(0, 20); // Apply the limit of 20
 
-      if (results.length >= 20) {
-        break;
-      }
-    }
-
-    return results;
+    return carsWithoutDetails;
   }
 
   async countCarsWithoutCarDetails(): Promise<number> {
     const carsWithoutCarDetails = await this.findAllCarsWithoutCarDetails();
     return carsWithoutCarDetails.length;
+  }
+
+  async findOneByExternalCarId(externalCarId: string) {
+    // Return last car by externalCarId without mongodb fields
+    return this.carModel
+      .findOne({ externalCarId: externalCarId })
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
   }
 }

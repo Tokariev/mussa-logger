@@ -15,7 +15,10 @@ export class CarDetailsService {
   ) {}
 
   async findByObservableDataHash(hash: string) {
-    return this.emitedCarDetailsModel.findOne({ observableDataHash: hash });
+    return this.emitedCarDetailsModel.findOne(
+      { observableDataHash: hash },
+      { _id: 0, __v: 0 }, // This projection excludes _id and __v fields
+    );
   }
 
   async create(carDetails: CarDetailsDto) {

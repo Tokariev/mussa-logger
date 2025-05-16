@@ -20,7 +20,13 @@ export class CarDetails {
   @Prop()
   bodyType: string;
   @Prop()
+  firstRegistration: string;
+  @Prop()
   seatsCount: string;
+  @Prop()
+  isNewModel: boolean;
+  @Prop()
+  isNewModelFollowingYear: boolean;
   @Prop()
   prices: object[];
   @Prop()

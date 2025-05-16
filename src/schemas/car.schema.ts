@@ -26,6 +26,8 @@ export class Car {
   @Prop()
   year: string;
   @Prop()
+  first_registration: string;
+  @Prop()
   body_type: string;
   @Prop()
   fuel_type: string;
