@@ -12,5 +12,6 @@ import { RequestLog, RequestLogSchema } from '../schemas/request-log.schema';
   ],
   controllers: [RequestLoggerController],
   providers: [RequestLoggerService],
+  exports: [RequestLoggerService],
 })
 export class RequestLoggerModule {}

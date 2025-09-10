@@ -8,6 +8,8 @@ import { CarDetailsRequest } from 'src/schemas/car-details-request.schema';
 import { CarDetails } from 'src/schemas/car-details.schema';
 import { CarToJazmakki } from 'src/schemas/car-to-jazmakki.schema';
 import { RequestLog } from 'src/schemas/request-log.schema';
+import { CarSpecService } from 'src/car-spec/car-spec.service';
+import { ParseCarResponseDto } from '@shared/types';
 
 // The exec method executes the query asynchronously and returns a promise.
 @Injectable()
@@ -23,6 +25,8 @@ export class CarService {
     private readonly carToJazmakkiModel: Model<CarToJazmakki>,
     @InjectModel(RequestLog.name)
     private readonly requestLogModel: Model<RequestLog>,
+
+    // private readonly carSpecService: CarSpecService,
   ) {}
 
   async count() {
@@ -40,12 +44,12 @@ export class CarService {
       .exec();
   }
 
-  async create(car: CarDto) {
+  async create(car: ParseCarResponseDto): Promise<Car> {
     const createdCar = new this.carModel(car);
-    return createdCar.save();
+    return await createdCar.save();
   }
 
-  async createCarDetailsRequest(car: CarDto) {
+  async createCarDetailsRequest(car: ParseCarResponseDto) {
     const createdCarDetailsRequest = new this.carDetailsRequestModel(car);
     return createdCarDetailsRequest.save();
   }
@@ -56,15 +60,14 @@ export class CarService {
     return this.carDetailsRequestModel.find({ externalCarId }).lean().exec();
   }
 
-  async findAllByUrl(car: CarDto) {
+  async findAllByUrl(car: ParseCarResponseDto) {
     return this.carModel.find({ source: car.source }).sort({ createdAt: -1 });
   }
 
-  async findLastByUrl(car: CarDto) {
+  async findLastByUrl(car: ParseCarResponseDto) {
     return this.carModel
       .findOne({ source: car.source })
       .sort({ createdAt: -1 })
-      .lean()
       .exec();
   }
 
@@ -88,11 +91,13 @@ export class CarService {
     return car.save();
   }
 
-  async removeOldCars() {
+  async removeOldCars(olderThanDays: number) {
     const today = new Date();
-    const sixtyDaysAgo = new Date(today.setDate(today.getDate() - 60));
+    const olderThanDate = new Date(
+      today.setDate(today.getDate() - olderThanDays),
+    );
     return this.carModel
-      .deleteMany({ createdAt: { $lte: sixtyDaysAgo } })
+      .deleteMany({ createdAt: { $lte: olderThanDate } })
       .exec();
   }
 
@@ -168,10 +173,18 @@ export class CarService {
   }
 
   async findOneByExternalCarId(externalCarId: string) {
-    // Return last car by externalCarId without mongodb fields
+    // Return last car by externalCarId without mongodb fields _id, __v
+    // and createdAt
+    // and updatedAt
     return this.carModel
-      .findOne({ externalCarId: externalCarId })
-      .sort({ createdAt: -1 })
+      .findOne(
+        { externalCarId },
+        {
+          _id: 0,
+          __v: 0,
+          createdAt: 0,
+        },
+      )
       .lean()
       .exec();
   }

@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { CarService } from './car.service';
-import { CarDto } from '../dto/car-dto';
 import { UpdatePriceType } from './types/update-price.type';
+import { ParseCarResponseDto } from '@shared/types';
+import { Car } from 'src/schemas/car.schema';
 
 @Controller('car')
 export class CarController {
@@ -18,12 +19,12 @@ export class CarController {
   }
 
   @Post('/create')
-  async create(@Body() car: CarDto) {
+  async create(@Body() car: ParseCarResponseDto): Promise<Car> {
     return this.carService.create(car);
   }
 
   @Post('/create-car-details-request')
-  async createCarDetailsRequest(@Body() car: CarDto) {
+  async createCarDetailsRequest(@Body() car: ParseCarResponseDto) {
     return this.carService.createCarDetailsRequest(car);
   }
 
@@ -33,7 +34,7 @@ export class CarController {
   }
 
   @Post('/find-all-by-url')
-  async findAllByUrl(@Body() car: CarDto) {
+  async findAllByUrl(@Body() car: ParseCarResponseDto) {
     return this.carService.findAllByUrl(car);
   }
 
@@ -46,7 +47,7 @@ export class CarController {
   }
 
   @Post('/find-last-by-url')
-  async findLastByUrl(@Body() car: CarDto) {
+  async findLastByUrl(@Body() car: ParseCarResponseDto) {
     return this.carService.findLastByUrl(car);
   }
 

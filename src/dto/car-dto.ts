@@ -37,5 +37,4 @@ export class CarDto {
   photo_urls: string;
   has_full_service_history: boolean;
   has_car_accident: boolean;
-  // published_at: string;
 }

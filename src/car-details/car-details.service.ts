@@ -3,6 +3,7 @@ import { CarDetails } from '../schemas/car-details.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { CarDetailsRequest } from 'src/schemas/car-details-request.schema';
 import { EmitedCarDetails } from 'src/schemas/emited-car-details.schema';
 
 @Injectable()
@@ -10,6 +11,8 @@ export class CarDetailsService {
   constructor(
     @InjectModel(CarDetails.name)
     private carDetailsModel: Model<CarDetails>,
+    @InjectModel(CarDetailsRequest.name)
+    private readonly carDetailsRequestModel: Model<CarDetailsRequest>,
     @InjectModel(EmitedCarDetails.name)
     private emitedCarDetailsModel: Model<EmitedCarDetails>,
   ) {}
@@ -39,11 +42,33 @@ export class CarDetailsService {
     return this.emitedCarDetailsModel.find({ externalCarId });
   }
 
-  removeOldCarDetails() {
+  removeOldCarDetails(olderThanDays: number) {
     const today = new Date();
-    const sixtyDaysAgo = new Date(today.setDate(today.getDate() - 60));
+    const olderThanDate = new Date(
+      today.setDate(today.getDate() - olderThanDays),
+    );
     return this.carDetailsModel.deleteMany({
-      createdAt: { $lte: sixtyDaysAgo },
+      createdAt: { $lte: olderThanDate },
+    });
+  }
+
+  removeOldCarDetailsRequests(olderThanDays: number) {
+    const today = new Date();
+    const olderThanDate = new Date(
+      today.setDate(today.getDate() - olderThanDays),
+    );
+    return this.carDetailsRequestModel.deleteMany({
+      createdAt: { $lte: olderThanDate },
+    });
+  }
+
+  removeOldEmitedCarDetails(olderThanDays: number) {
+    const today = new Date();
+    const olderThanDate = new Date(
+      today.setDate(today.getDate() - olderThanDays),
+    );
+    return this.emitedCarDetailsModel.deleteMany({
+      createdAt: { $lte: olderThanDate },
     });
   }
 }

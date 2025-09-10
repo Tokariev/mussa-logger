@@ -33,7 +33,7 @@ describe('TracebackService', () => {
     const result = await service.getCountOfFailedParseRequests();
     expect(result).toBe(count);
     expect(model.countDocuments).toHaveBeenCalledWith({
-      service: 'mobile_svc_parser',
+      service: 'mobile',
       createdAt: {
         $gte: expect.any(Date),
         $lt: expect.any(Date),

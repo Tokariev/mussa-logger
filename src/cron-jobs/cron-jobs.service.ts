@@ -3,6 +3,8 @@ import { Cron } from '@nestjs/schedule';
 import { CarDetailsService } from '../car-details/car-details.service';
 import { CarService } from '../car/car.service';
 import { CarToJazmakkiService } from 'src/car-to-jazmakki/car-to-jazmakki.service';
+import { CarSpecService } from 'src/car-spec/car-spec.service';
+import { RequestLoggerService } from 'src/request-logger/request-logger.service';
 
 @Injectable()
 export class CronJobsService {
@@ -10,14 +12,21 @@ export class CronJobsService {
     private readonly carService: CarService,
     private readonly carDetailsService: CarDetailsService,
     private readonly carToJazmakkiService: CarToJazmakkiService,
+    private readonly carSpecService: CarSpecService,
+    private readonly requestLoggerService: RequestLoggerService,
   ) {}
 
-  // One per day at 00:00 remove all cars older then 60 days
   @Cron('0 0 0 * * *')
   removeOldCars(): void {
-    this.carService.removeOldCars();
-    this.carDetailsService.removeOldCarDetails();
-    this.carToJazmakkiService.removeOldCarToJazmakki();
+    const OLDER_THAN_DAYS = 90;
+
+    this.carService.removeOldCars(OLDER_THAN_DAYS);
+    this.carDetailsService.removeOldCarDetails(OLDER_THAN_DAYS);
+    this.carDetailsService.removeOldCarDetailsRequests(OLDER_THAN_DAYS);
+    this.carDetailsService.removeOldEmitedCarDetails(OLDER_THAN_DAYS);
+    this.carToJazmakkiService.removeOldCarToJazmakki(OLDER_THAN_DAYS);
+    this.carSpecService.removeOldCarSpecs(OLDER_THAN_DAYS);
+    this.requestLoggerService.removeOldRequestLogs(OLDER_THAN_DAYS);
   }
 
   // One per day at 10:00 get all cars from yestarday that doesnt have car details

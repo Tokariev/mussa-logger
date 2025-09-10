@@ -38,4 +38,14 @@ export class RequestLoggerService {
       .find(filter, { _id: 0, __v: 0 })
       .sort({ createdAt: -1 });
   }
+
+  removeOldRequestLogs(olderThanDays: number) {
+    const today = new Date();
+    const olderThanDate = new Date(
+      today.setDate(today.getDate() - olderThanDays),
+    );
+    return this.logModel.deleteMany({
+      createdAt: { $lte: olderThanDate },
+    });
+  }
 }
