@@ -29,7 +29,6 @@
 # ===== Base =====
 FROM node:20-alpine AS base
 WORKDIR /app
-ENV NODE_ENV=production
 ENV NPM_CONFIG_LOGLEVEL=warn
 
 # ================================
@@ -72,14 +71,14 @@ RUN npm ci --only=production --silent && npm cache clean --force
 # ================================
 FROM service-deps AS builder
 
-# Dev-Deps für Build holen
-RUN npm ci --silent
+# WICHTIG: Dev-Deps installieren
+RUN npm ci --include=dev --silent
 
 # Source kopieren & bauen
 COPY logger/ .
-RUN npm run build
+RUN npm run build 
 
-# Direkt nach dem Build wieder schlank machen
+# Nach dem Build wieder abspecken
 RUN npm prune --production
 
 # ================================
