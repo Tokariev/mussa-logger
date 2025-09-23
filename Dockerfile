@@ -26,8 +26,8 @@
 
 # >>>>>>
 
-
-FROM node:18.19-alpine AS base
+# ===== Base =====
+FROM node:20-alpine AS base
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NPM_CONFIG_LOGLEVEL=warn
@@ -38,21 +38,16 @@ ENV NPM_CONFIG_LOGLEVEL=warn
 FROM base AS shared-deps
 WORKDIR /shared-types
 
-# Copy package files first for better layer caching
+# Nur package-Dateien für Caching
 COPY shared-types/package*.json ./
-RUN npm ci --only=production --silent
+# Dev-Dependencies INSTALLIEREN, damit tsc da ist
+RUN npm ci --silent
 
-# Copy minimal TypeScript config
-COPY shared-types/tsconfig.json ./
-
-# Install TypeScript only for building (will be removed)
-RUN npm install --no-save typescript
-
-# Copy source and build
+# Source kopieren und bauen
 COPY shared-types/ .
 RUN npm run build
 
-# Remove TypeScript and dev dependencies to reduce size
+# Auf Production slimmen
 RUN npm prune --production
 
 # ================================
@@ -61,32 +56,30 @@ RUN npm prune --production
 FROM base AS service-deps
 WORKDIR /app
 
-# Copy shared-types artifacts (smaller than full directory)
+# Nur gebaute Artefakte der shared-types übernehmen
 COPY --from=shared-deps /shared-types/dist /shared-types/dist
 COPY --from=shared-deps /shared-types/package.json /shared-types/
 
-# Copy service package files for caching
+# Service package-Dateien
 COPY logger/package*.json ./
 
-# Install shared-types and production dependencies only
+# shared-types + Prod-Deps
 RUN npm install file:/shared-types --silent
 RUN npm ci --only=production --silent && npm cache clean --force
 
 # ================================
-# Build stage - Only for compilation
+# Build stage
 # ================================
 FROM service-deps AS builder
 
-# Install dev dependencies (only needed for building)
+# Dev-Deps für Build holen
 RUN npm ci --silent
 
-# Copy source
+# Source kopieren & bauen
 COPY logger/ .
-
-# Build the application
 RUN npm run build
 
-# Remove dev dependencies immediately after build
+# Direkt nach dem Build wieder schlank machen
 RUN npm prune --production
 
 # ================================
@@ -95,14 +88,10 @@ RUN npm prune --production
 FROM base AS development
 WORKDIR /app
 
-# Copy from builder stage (includes built app + production deps)
 COPY --from=builder /app .
-
-# Install dev dependencies and CLI tools for development
 RUN npm ci --silent
 RUN npm install -g @nestjs/cli@latest --silent
 
-# Copy shared-types for development
 COPY --from=shared-deps /shared-types /shared-types
 
 ENV NODE_ENV=development
@@ -110,27 +99,24 @@ EXPOSE 3005
 CMD ["npm", "run", "start:dev"]
 
 # ================================
-# Production stage - Minimal runtime
+# Production stage
 # ================================
-FROM node:18.19-alpine AS production
-
+FROM node:20-alpine AS production
 WORKDIR /app
 
-# Copy shared-types
-COPY --from=shared-deps /shared-types /shared-types
+# Optional: shared-types nur, falls zur Runtime gebraucht
+# COPY --from=shared-deps /shared-types /shared-types
 
-# Copy only production artifacts
-COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nestjs:nodejs /app/package*.json ./
+# Prod-Artefakte
+COPY --from=builder --chown=node:node /app/dist ./dist
+COPY --from=builder --chown=node:node /app/node_modules ./node_modules
+COPY --from=builder --chown=node:node /app/package*.json ./
 
-# Switch to non-root user
-# USER nestjs
+# Als non-root laufen
+USER node
 
-# Environment
 ENV NODE_ENV=production
 ENV TZ="Europe/Berlin"
 
 EXPOSE 3005
-
 CMD ["node", "dist/main"]
