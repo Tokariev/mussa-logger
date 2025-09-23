@@ -26,7 +26,7 @@ export class CronJobsService {
     this.carDetailsService.removeOldEmitedCarDetails(OLDER_THAN_DAYS);
     this.carToJazmakkiService.removeOldCarToJazmakki(OLDER_THAN_DAYS);
     this.carSpecService.removeOldCarSpecs(OLDER_THAN_DAYS);
-    this.requestLoggerService.removeOldRequestLogs(OLDER_THAN_DAYS);
+    this.requestLoggerService.removeOldRequestLogs(10);
   }
 
   // One per day at 10:00 get all cars from yestarday that doesnt have car details
