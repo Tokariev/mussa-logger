@@ -35,20 +35,20 @@ ENV NPM_CONFIG_LOGLEVEL=warn
 # ================================
 # Dependencies stage - Shared types
 # ================================
-FROM base AS shared-deps
+FROM node:20-alpine AS shared-deps
 WORKDIR /shared-types
 
-# Nur package-Dateien für Caching
 COPY shared-types/package*.json ./
-# Dev-Dependencies INSTALLIEREN, damit tsc da ist
-RUN npm ci --silent
+RUN npm ci --only=production --silent
 
-# Source kopieren und bauen
+# nur fürs Bauen
+RUN npm install --no-save --silent typescript
+
 COPY shared-types/ .
 RUN npm run build
 
-# Auf Production slimmen
 RUN npm prune --production
+
 
 # ================================
 # Dependencies stage - Service
