@@ -81,13 +81,16 @@ WORKDIR /app
 # Optional: shared-types nur, falls zur Runtime gebraucht
 COPY --from=shared-deps /shared-types /shared-types
 
-# Prod-Artefakte
-COPY --from=builder --chown=node:node /app/dist ./dist
-COPY --from=builder --chown=node:node /app/node_modules ./node_modules
-COPY --from=builder --chown=node:node /app/package*.json ./
+# Copy package files and install dependencies
+# We cann't pre-compiled native binaries from the builder because were compiled for a different architecture -> linux/x86_64
+COPY --from=builder /app/package*.json ./
 
-# Als non-root laufen
-USER node
+# Install dependencies and rebuild native modules for production architecture
+RUN npm install file:/shared-types --silent
+RUN npm ci --only=production --silent
+
+# Copy built application
+COPY --from=builder /app/dist ./dist
 
 ENV NODE_ENV=production
 ENV TZ="Europe/Berlin"
