@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RequestLog, RequestLogDocument } from '../schemas/request-log.schema';
-import { CreateRequestLogDto } from '../dto/create-request-log-dto';
+// import { CreateRequestLogDto } from '../dto/create-request-log-dto';
+import { CreateRequestLogDto } from '@shared/types';
 import { SearchRequestLogsDto } from 'src/dto/search-request-logs-dto';
 
 @Injectable()

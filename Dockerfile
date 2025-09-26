@@ -9,6 +9,7 @@ ENV NPM_CONFIG_LOGLEVEL=warn
 FROM base AS shared-deps
 WORKDIR /shared-types
 
+# Copy package files first for better layer caching
 COPY shared-types/package*.json ./
 RUN npm ci --only=production --silent
 
@@ -51,6 +52,8 @@ RUN npm ci --include=dev --silent
 
 # Source kopieren & bauen
 COPY logger/ .
+
+# Build the application
 RUN npm run build 
 
 # Nach dem Build wieder abspecken
@@ -62,7 +65,10 @@ RUN npm prune --production
 FROM base AS development
 WORKDIR /app
 
+# Copy from builder stage (includes built app + production deps)
 COPY --from=builder /app .
+
+# Install dev dependencies and CLI tools for development
 RUN npm ci --silent
 RUN npm install -g @nestjs/cli@latest --silent
 

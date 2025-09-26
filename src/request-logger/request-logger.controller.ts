@@ -1,7 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { RequestLoggerService } from './request-logger.service';
-import { CreateRequestLogDto } from '../dto/create-request-log-dto';
+// import { CreateRequestLogDto } from '../dto/create-request-log-dto';
 import { SearchRequestLogsDto } from 'src/dto/search-request-logs-dto';
+import { CreateRequestLogDto } from '@shared/types';
 
 @Controller('request-logger')
 export class RequestLoggerController {
