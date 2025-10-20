@@ -39,12 +39,12 @@ export class CarController {
   }
 
   // find last car by externalCarId
-  @Get('/find-last-by-external-car-id/:externalCarId')
-  async findLastByExternalCarIds(
-    @Param('externalCarId') externalCarId: string,
-  ) {
-    return this.carService.findOneByExternalCarId(externalCarId);
-  }
+  // @Get('/find-last-by-external-car-id/:externalCarId')
+  // async findLastByExternalCarIds(
+  //   @Param('externalCarId') externalCarId: string,
+  // ) {
+  //   return this.carService.findOneByExternalCarId(externalCarId);
+  // }
 
   @Post('/find-last-by-url')
   async findLastByUrl(@Body() car: ParseCarResponseDto) {

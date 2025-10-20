@@ -15,6 +15,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RequestLoggerModule } from './request-logger/request-logger.module';
 import { DataflowModule } from './dataflow/dataflow.module';
 import { CarSpecModule } from './car-spec/car-spec.module';
+import { SavedSearchModule } from './saved-search/saved-search.module';
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://mongo:27017', {
@@ -37,6 +38,7 @@ import { CarSpecModule } from './car-spec/car-spec.module';
     RequestLoggerModule,
     DataflowModule,
     CarSpecModule,
+    SavedSearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
