@@ -24,6 +24,8 @@ import { SavedSearchModule } from './saved-search/saved-search.module';
         username: 'root',
         password: 'example',
       },
+      maxPoolSize: 10,
+      minPoolSize: 2,
     }),
     CarModule,
     CarDetailsModule,
