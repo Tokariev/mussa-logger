@@ -18,7 +18,7 @@ export class CronJobsService {
 
   @Cron('0 0 0 * * *')
   removeOldCars(): void {
-    const OLDER_THAN_DAYS = 90;
+    const OLDER_THAN_DAYS = 60;
 
     this.carService.removeOldCars(OLDER_THAN_DAYS);
     this.carDetailsService.removeOldCarDetails(OLDER_THAN_DAYS);
