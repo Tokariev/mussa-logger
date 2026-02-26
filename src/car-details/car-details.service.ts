@@ -53,12 +53,10 @@ export class CarDetailsService {
   }
 
   removeOldCarDetailsRequests(olderThanDays: number) {
-    const today = new Date();
-    const olderThanDate = new Date(
-      today.setDate(today.getDate() - olderThanDays),
-    );
     return this.carDetailsRequestModel.deleteMany({
-      createdAt: { $lte: olderThanDate },
+      createdAt: {
+        $lte: new Date(Date.now() - olderThanDays * 24 * 60 * 60 * 1000),
+      },
     });
   }
 
