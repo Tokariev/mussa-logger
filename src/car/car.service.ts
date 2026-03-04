@@ -92,12 +92,13 @@ export class CarService {
   }
 
   async removeOldCars(olderThanDays: number) {
-    const today = new Date();
     const olderThanDate = new Date(
-      today.setDate(today.getDate() - olderThanDays),
+      Date.now() - olderThanDays * 24 * 60 * 60 * 1000,
     );
     return this.carModel
-      .deleteMany({ createdAt: { $lte: olderThanDate } })
+      .deleteMany({
+        createdAt: { $lte: olderThanDate },
+      })
       .exec();
   }
 

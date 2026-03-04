@@ -43,27 +43,28 @@ export class CarDetailsService {
   }
 
   removeOldCarDetails(olderThanDays: number) {
-    const today = new Date();
     const olderThanDate = new Date(
-      today.setDate(today.getDate() - olderThanDays),
+      Date.now() - olderThanDays * 24 * 60 * 60 * 1000,
     );
-    return this.carDetailsModel.deleteMany({
+    return this.carDetailsModel
+      .deleteMany({
+        createdAt: { $lte: olderThanDate },
+      })
+      .exec();
+  }
+
+  removeOldCarDetailsRequests(olderThanDays: number) {
+    const olderThanDate = new Date(
+      Date.now() - olderThanDays * 24 * 60 * 60 * 1000,
+    );
+    return this.carDetailsRequestModel.deleteMany({
       createdAt: { $lte: olderThanDate },
     });
   }
 
-  removeOldCarDetailsRequests(olderThanDays: number) {
-    return this.carDetailsRequestModel.deleteMany({
-      createdAt: {
-        $lte: new Date(Date.now() - olderThanDays * 24 * 60 * 60 * 1000),
-      },
-    });
-  }
-
   removeOldEmitedCarDetails(olderThanDays: number) {
-    const today = new Date();
     const olderThanDate = new Date(
-      today.setDate(today.getDate() - olderThanDays),
+      Date.now() - olderThanDays * 24 * 60 * 60 * 1000,
     );
     return this.emitedCarDetailsModel.deleteMany({
       createdAt: { $lte: olderThanDate },

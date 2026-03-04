@@ -21,9 +21,14 @@ export class CarToJazmakkiService {
   }
 
   async removeOldCarToJazmakki(olderThanDays: number) {
-    // Find all cars older then 60 days and remove them
-    const date = new Date();
-    date.setDate(date.getDate() - olderThanDays);
-    return this.carToJazmakkiModel.deleteMany({ createdAt: { $lt: date } });
+    const olderThanDate = new Date(
+      Date.now() - olderThanDays * 24 * 60 * 60 * 1000,
+    );
+
+    return this.carToJazmakkiModel
+      .deleteMany({
+        createdAt: { $lte: olderThanDate },
+      })
+      .exec();
   }
 }
