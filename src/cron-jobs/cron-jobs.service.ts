@@ -22,7 +22,7 @@ export class CronJobsService {
 
     this.carService.removeOldCars(OLDER_THAN_DAYS);
     this.carDetailsService.removeOldCarDetails(OLDER_THAN_DAYS);
-    this.carDetailsService.removeOldCarDetailsRequests(OLDER_THAN_DAYS);
+    this.carDetailsService.removeOldCarDetailsRequests(7);
     this.carDetailsService.removeOldEmitedCarDetails(OLDER_THAN_DAYS);
     this.carToJazmakkiService.removeOldCarToJazmakki(OLDER_THAN_DAYS);
     this.carSpecService.removeOldCarSpecs(OLDER_THAN_DAYS);
