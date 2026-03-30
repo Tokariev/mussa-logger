@@ -69,7 +69,7 @@ export class Car {
   has_car_accident: boolean;
   @Prop()
   engine_power: string[];
-  @Prop({ default: Date.now })
+  @Prop({ default: Date.now, index: true })
   createdAt: Date;
 }
 
