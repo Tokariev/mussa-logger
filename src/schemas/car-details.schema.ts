@@ -33,7 +33,7 @@ export class CarDetails {
   numResultsTotal: number;
   @Prop({ index: true, type: String })
   observableDataHash: string;
-  @Prop({ default: Date.now })
+  @Prop({ default: Date.now, index: true })
   createdAt: Date;
 }
 

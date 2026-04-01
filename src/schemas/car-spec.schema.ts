@@ -35,10 +35,10 @@ export class CarSpec {
   @Prop({ index: true })
   transmissionType: string; // 'manual' | 'automatic' |
 
-  @Prop({ index: true })
+  @Prop()
   allWheelDrive: boolean;
 
-  @Prop({ index: true })
+  @Prop()
   hasNavigation: boolean;
 
   @Prop({ index: true })
@@ -56,8 +56,11 @@ export class CarSpec {
     fieldsMissing: string[];
   };
 
-  @Prop({ type: Date, default: now })
+  @Prop({ type: Date, default: now, index: true })
   createdAt: Date;
 }
 
 export const CarSpecSchema = SchemaFactory.createForClass(CarSpec);
+
+// Compound index: covers findOne({ externalCarId }).sort({ createdAt: -1 }) without in-memory sort.
+CarSpecSchema.index({ externalCarId: 1, createdAt: -1 });

@@ -25,24 +25,13 @@ export class CarSpecService {
       throw new Error(`Car with ID ${createCarSpecDto.carUUID} not found`);
     }
 
-    const existingSpecs = await this.carSpecsModel
-      .findOne({ carUUID: createCarSpecDto.carUUID })
+    return this.carSpecsModel
+      .findOneAndUpdate(
+        { carUUID: createCarSpecDto.carUUID },
+        { $setOnInsert: createCarSpecDto },
+        { upsert: true, new: true },
+      )
       .exec();
-    if (existingSpecs) {
-      console.log(
-        `✅ CarSpecs for ${existingSpecs.brand} ${existingSpecs.model} already exist for car ${existingSpecs.carUUID}`,
-      );
-      return existingSpecs;
-    }
-
-    const carSpecs: CarSpecDocument = new this.carSpecsModel(createCarSpecDto);
-
-    const savedSpecs = await carSpecs.save();
-    console.log(
-      `✅ CarSpecs for ${createCarSpecDto.brand}  ${createCarSpecDto.model}created successfully for car ${createCarSpecDto.carUUID}`,
-    );
-
-    return savedSpecs;
   }
 
   async findCarSpecByExternalCarId(
@@ -140,8 +129,16 @@ export class CarSpecService {
 
       console.log(`Found ${allMatchingCars.length} cars matching the criteria`);
 
-      // Find car by carUUIDs
-      const carUUIDs = allMatchingCars.map((spec) => spec.carUUID);
+      // Deduplicate carUUIDs before querying (multiple specs can reference the same car)
+      const seen = new Set<string>();
+      const carUUIDs = allMatchingCars
+        .map((spec) => spec.carUUID)
+        .filter((id) => {
+          const key = String(id);
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
 
       const cars = await this.carModel
         .find({ _id: { $in: carUUIDs } })

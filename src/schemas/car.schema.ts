@@ -11,7 +11,7 @@ type PriceHistory = {
 export class Car {
   @Prop()
   url: string;
-  @Prop({ index: true })
+  @Prop()
   source: string;
   @Prop({ index: true })
   externalCarId: string;
@@ -74,3 +74,8 @@ export class Car {
 }
 
 export const CarSchema = SchemaFactory.createForClass(Car);
+
+// Compound index: covers find({ source }).sort({ createdAt: -1 }) without an in-memory sort.
+// The compound prefix {source} also serves any find({ source }) equality query,
+// so the old single-field source index is no longer needed.
+CarSchema.index({ source: 1, createdAt: -1 });

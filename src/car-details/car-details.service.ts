@@ -18,10 +18,10 @@ export class CarDetailsService {
   ) {}
 
   async findByObservableDataHash(hash: string) {
-    return this.emitedCarDetailsModel.findOne(
-      { observableDataHash: hash },
-      { _id: 0, __v: 0 }, // This projection excludes _id and __v fields
-    );
+    return this.emitedCarDetailsModel
+      .findOne({ observableDataHash: hash }, { _id: 0, __v: 0 })
+      .lean()
+      .exec();
   }
 
   async create(carDetails: CarDetailsDto) {
@@ -35,11 +35,11 @@ export class CarDetailsService {
   }
 
   async findByExternalCarId(externalCarId: string) {
-    return this.carDetailsModel.find({ externalCarId });
+    return this.carDetailsModel.find({ externalCarId }).lean().exec();
   }
 
   async findEmitedByExternalCarId(externalCarId: string) {
-    return this.emitedCarDetailsModel.find({ externalCarId });
+    return this.emitedCarDetailsModel.find({ externalCarId }).lean().exec();
   }
 
   removeOldCarDetails(olderThanDays: number) {

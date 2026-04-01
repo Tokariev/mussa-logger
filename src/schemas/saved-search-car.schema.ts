@@ -15,3 +15,6 @@ export class SavedSearchCar extends Car {
 
 export const SavedSearchCarSchema =
   SchemaFactory.createForClass(SavedSearchCar);
+
+// Compound index: covers findOne({ externalCarId }).sort({ createdAt: -1 }) without in-memory sort.
+SavedSearchCarSchema.index({ externalCarId: 1, createdAt: -1 });

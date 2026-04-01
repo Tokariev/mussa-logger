@@ -61,13 +61,18 @@ export class CarService {
   }
 
   async findAllByUrl(car: ParseCarResponseDto) {
-    return this.carModel.find({ source: car.source }).sort({ createdAt: -1 });
+    return this.carModel
+      .find({ source: car.source })
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
   }
 
   async findLastByUrl(car: ParseCarResponseDto) {
     return this.carModel
       .findOne({ source: car.source })
       .sort({ createdAt: -1 })
+      .lean()
       .exec();
   }
 
@@ -78,17 +83,17 @@ export class CarService {
   async updatePrice(price: UpdatePriceType) {
     const { documentId, newPrice } = price;
 
-    const car = await this.carModel.findById(documentId);
-
-    const currentPrice = {
-      price: newPrice,
-      timestamp: new Date(),
-    };
-
-    car.price = newPrice;
-    car.price_history.push(currentPrice);
-
-    return car.save();
+    return this.carModel
+      .findByIdAndUpdate(
+        documentId,
+        {
+          $set: { price: newPrice },
+          $push: { price_history: { price: newPrice, timestamp: new Date() } },
+        },
+        { new: true },
+      )
+      .lean()
+      .exec();
   }
 
   async removeOldCars(olderThanDays: number) {
@@ -108,8 +113,7 @@ export class CarService {
   }
 
   async updatePriceById(data: CarDto) {
-    const carWithUpdatedPrice = await this.carModel.create(data);
-    await carWithUpdatedPrice.save();
+    await this.carModel.create(data);
   }
 
   async updateCarStatus(externalCarId: string, status: string) {

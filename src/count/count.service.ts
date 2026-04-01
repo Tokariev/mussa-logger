@@ -21,14 +21,7 @@ export class CountService {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    return this.carModel
-      .find({
-        createdAt: {
-          $gte: today,
-        },
-      })
-      .countDocuments()
-      .exec();
+    return this.carModel.countDocuments({ createdAt: { $gte: today } }).exec();
   }
 
   async readCountOfErrors(): Promise<number> {
@@ -39,13 +32,6 @@ export class CountService {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    return this.errorModel
-      .find({
-        createdAt: {
-          $gte: today,
-        },
-      })
-      .countDocuments()
-      .exec();
+    return this.errorModel.countDocuments({ createdAt: { $gte: today } }).exec();
   }
 }

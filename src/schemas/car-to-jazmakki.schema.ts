@@ -14,3 +14,8 @@ export class CarToJazmakki extends Car {
 }
 
 export const CarToJazmakkiSchema = SchemaFactory.createForClass(CarToJazmakki);
+
+// Covered query index: find({ createdAt: { $gte, $lt } }).select('externalCarId')
+// With both fields in the index, MongoDB can satisfy the query entirely from the index
+// without loading full documents from the collection.
+CarToJazmakkiSchema.index({ createdAt: 1, externalCarId: 1 });

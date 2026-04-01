@@ -21,3 +21,7 @@ export class TracebackError {
 
 export const TracebackErrorSchema =
   SchemaFactory.createForClass(TracebackError);
+
+// Compound index: covers countDocuments({ service: 'mobile', createdAt: { $gte, $lt } })
+// which runs on every call to getCountOfFailedParseRequests().
+TracebackErrorSchema.index({ service: 1, createdAt: 1 });

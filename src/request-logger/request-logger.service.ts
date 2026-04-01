@@ -28,16 +28,11 @@ export class RequestLoggerService {
       filter = { route: search.route };
     }
 
-    filter = {
-      ...filter,
-    };
-
-    // find logs for current day
-    // remove _id and __v from the response
-    // sort by createdAt in descending order
     return this.logModel
       .find(filter, { _id: 0, __v: 0 })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
   }
 
   removeOldRequestLogs(olderThanDays: number) {
