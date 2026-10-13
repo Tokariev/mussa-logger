@@ -11,9 +11,11 @@ import { EmitedCarDetails } from '../schemas/emited-car-details.schema';
  */
 function chainable(resolvedValue?: any) {
   const q: any = {
+    sort: jest.fn(),
     lean: jest.fn(),
     exec: jest.fn().mockResolvedValue(resolvedValue),
   };
+  q.sort.mockReturnValue(q);
   q.lean.mockReturnValue(q);
   q.then = (resolve: any, reject: any) =>
     Promise.resolve(resolvedValue).then(resolve, reject);
@@ -73,6 +75,15 @@ describe('CarDetailsService', () => {
         { observableDataHash: 'hash-abc' },
         { _id: 0, __v: 0 },
       );
+    });
+
+    it('should return the newest document for the hash', async () => {
+      const query = chainable({ observableDataHash: 'hash-abc' });
+      emitedCarDetailsModel.findOne.mockReturnValue(query);
+
+      await service.findByObservableDataHash('hash-abc');
+
+      expect(query.sort).toHaveBeenCalledWith({ createdAt: -1 });
     });
 
     it('should return null when no document matches the hash', async () => {

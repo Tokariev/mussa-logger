@@ -18,8 +18,10 @@ export class CarDetailsService {
   ) {}
 
   async findByObservableDataHash(hash: string) {
+    // Newest first: a failed price lookup is saved too, so the latest one must win.
     return this.emitedCarDetailsModel
       .findOne({ observableDataHash: hash }, { _id: 0, __v: 0 })
+      .sort({ createdAt: -1 })
       .lean()
       .exec();
   }

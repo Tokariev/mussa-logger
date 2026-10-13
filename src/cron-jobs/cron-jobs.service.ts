@@ -18,10 +18,10 @@ export class CronJobsService {
 
   @Cron('0 0 0 * * *')
   removeOldCars(): void {
-    const OLDER_THAN_DAYS = 60;
+    const OLDER_THAN_DAYS = 90;
 
     this.carService.removeOldCars(OLDER_THAN_DAYS);
-    this.carDetailsService.removeOldCarDetails(OLDER_THAN_DAYS);
+    this.carDetailsService.removeOldCarDetails(300); // we need to keep car details for a longer period because we re-emit them if the same car appears again
     this.carDetailsService.removeOldCarDetailsRequests(7);
     this.carDetailsService.removeOldEmitedCarDetails(OLDER_THAN_DAYS);
     this.carToJazmakkiService.removeOldCarToJazmakki(OLDER_THAN_DAYS);
