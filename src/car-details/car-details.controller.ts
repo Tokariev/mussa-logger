@@ -28,6 +28,14 @@ export class CarDetailsController {
     return this.carDetailsService.findEmitedByExternalCarId(externalCarId);
   }
 
+  // Get the newest emited car details that have prices
+  @Get('/emited/:externalCarId/latest')
+  async findLatestEmitedWithPrices(
+    @Param('externalCarId') externalCarId: string,
+  ) {
+    return this.carDetailsService.findLatestEmitedWithPrices(externalCarId);
+  }
+
   // Find car by observable data hash
   @Get('/observable-data-hash/:hash')
   async findByObservableDataHash(@Param('hash') hash: string) {

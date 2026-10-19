@@ -44,6 +44,18 @@ export class CarDetailsService {
     return this.emitedCarDetailsModel.find({ externalCarId }).lean().exec();
   }
 
+  async findLatestEmitedWithPrices(externalCarId: string) {
+    // A failed price lookup is saved with empty prices, so it must not count.
+    return this.emitedCarDetailsModel
+      .findOne(
+        { externalCarId, 'prices.0': { $exists: true } },
+        { _id: 0, __v: 0 },
+      )
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
+  }
+
   removeOldCarDetails(olderThanDays: number) {
     const olderThanDate = new Date(
       Date.now() - olderThanDays * 24 * 60 * 60 * 1000,

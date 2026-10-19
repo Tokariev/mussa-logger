@@ -133,6 +133,24 @@ describe('CarDetailsService', () => {
     });
   });
 
+  // ─── findLatestEmitedWithPrices ────────────────────────────────────────────
+
+  describe('findLatestEmitedWithPrices', () => {
+    it('should query the newest emited details with prices for the car', async () => {
+      const query = chainable({ externalCarId: 'ext-1', prices: [{ price: 1 }] });
+      emitedCarDetailsModel.findOne.mockReturnValue(query);
+
+      const result = await service.findLatestEmitedWithPrices('ext-1');
+
+      expect(emitedCarDetailsModel.findOne).toHaveBeenCalledWith(
+        { externalCarId: 'ext-1', 'prices.0': { $exists: true } },
+        { _id: 0, __v: 0 },
+      );
+      expect(query.sort).toHaveBeenCalledWith({ createdAt: -1 });
+      expect(result).toEqual({ externalCarId: 'ext-1', prices: [{ price: 1 }] });
+    });
+  });
+
   // ─── removeOldCarDetails ───────────────────────────────────────────────────
 
   describe('removeOldCarDetails', () => {
